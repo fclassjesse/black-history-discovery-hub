@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2026-11-07T18:39:17Z</responseDate>
+  <request verb="ListRecords" metadataPrefix="oai_dc">https://findingaids.library.dal.ca/;oai</request>
+  <ListRecords>
+            <record>
+        <header>
+          <identifier>oai:findingaids.library.dal.ca:nshd_16</identifier>
+          <datestamp>2014-12-23T21:53:25Z</datestamp>
+          <setSpec>oai:findingaids.library.dal.ca:nshd_2</setSpec>
+        </header>
+        <metadata>
+                      <oai_dc:dc
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
+    http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+
+      <dc:title>A description of the Bay of Fundy, Showing the Coast, Islands, Harbours, Creeks, Coves, Rocks, Sholes, Soundings, &amp;d Anchorings [Observed by Nathaniel Blackmore] From Moll&#039;s Atlas Minor</dc:title>
+  
+      <dc:creator>Janigan, David</dc:creator>
+  
+  
+  
+  
+  
+      <dc:date>[ca.1729]</dc:date>
+  
+  
+      <dc:format>1 map : mounted &amp; framed ; 44 cm x 20 cm</dc:format>
+  
+  <dc:identifier>https://findingaids.library.dal.ca//a-description-of-the-bay-of-fundy-showing-the-coast-islands-harbours-creeks-coves-rocks-sholes-soundings-d-anchorings-observed-by-nathaniel-blackmore-from-molls-atlas-minor</dc:identifier>
+
+            <dc:identifier>2011-006, Oversized Folder 3</dc:identifier>
+      
+  
+      <dc:language xsi:type="dcterms:ISO639-3">eng</dc:language>
+  
+  
+  
+  
+</oai_dc:dc>
+                  </metadata>
+                    </record>
+                <record>
+        <header>
+          <identifier>oai:findingaids.library.dal.ca:nshd_17</identifier>
+          <datestamp>2014-12-23T21:53:26Z</datestamp>
+          <setSpec>oai:findingaids.library.dal.ca:nshd_2</setSpec>
+        </header>
+        <metadata>
+                      <oai_dc:dc
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
+    http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+
+      <dc:title>Map of the City of Halifax Co., Nova Scotia</dc:title>
+  
+      <dc:creator>Janigan, David</dc:creator>
+  
+  
+  
+  
+  
+      <dc:date>[ca.1800]</dc:date>
+  
+  
+      <dc:format>1 map: mounted &amp; framed ; 31 cm x 39 cm</dc:format>
+  
+  <dc:identifier>https://findingaids.library.dal.ca//map-of-the-city-of-halifax-co-nova-scotia</dc:identifier>
+
+            <dc:identifier>2011-006, Oversized Folder 4</dc:identifier>
+      
+  
+      <dc:language xsi:type="dcterms:ISO639-3">eng</dc:language>
+  
+  
+  
+  
+</oai_dc:dc>
+                  </metadata>
+                    </record>
+                <record>
+        <header>
+          <identifier>oai:findingaids.library.dal.ca:nshd_18</identifier>
+          <datestamp>2014-12-23T21:53:27Z</datestamp>
+          <setSpec>oai:findingaids.library.dal.ca:nshd_2</setSpec>
+        </header>
+        <metadata>
+                      <oai_dc:dc
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
+    http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+
+      <dc:title>Chart of Chebucto Harbour, on the Coast of Accadia, or Nova Scotia, With the Plan of the Town of Halifax, by John Rocque</dc:title>
+  
+      <dc:creator>Janigan, David</dc:creator>
+  
+  
+  
+  
+  
+      <dc:date>1750</dc:date>
+  
+  
+      <dc:format>1 map : mounted &amp; framed ; 59 cm x 46 cm</dc:format>
+  
+  <dc:identifier>https://findingaids.library.dal.ca//chart-of-chebucto-harbour-on-the-coast-of-accadia-or-nova-scotia-with-the-plan-of-the-town-of-halifax-by-john-rocque</dc:identifier>
+
+            <dc:identifier>2011-006, Oversized Folder 5</dc:identifier>
+      
+  
+      <dc:language xsi:type="dcterms:ISO639-3">eng</dc:language>
+  
+  
+  
+  
+</oai_dc:dc>
+                  </metadata>
+                    </record>
+  <resumptionToken>eyJmcm9tIjoiIiwidW50aWwiOiIiLCJjdXJzb3IiOjEwMCwibWV0YWRhdGFQcmVmaXgiOiJvYWlfZGMiLCJzZXQiOiIifQ==</resumptionToken>
+    </ListRecords>
+</OAI-PMH>

@@ -1,0 +1,15 @@
+.env
+backend/.venv/
+backend/.pgdata/
+backend/.cache/
+backend/uploads/
+backend/tests/.uploads/
+backend/__pycache__/
+**/__pycache__/
+.pytest_cache/
+frontend/node_modules/
+frontend/.next/
+frontend/next-env.d.ts
+.DS_Store
+frontend/tsconfig.tsbuildinfo
+backend/jar*

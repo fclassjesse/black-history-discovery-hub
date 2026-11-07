@@ -1,0 +1,19 @@
+# Seed queries run against every configured live connector.
+queries:
+  - "Black Loyalists"
+  - "Africville"
+  - "African Nova Scotian"
+  - "Black Nova Scotians"
+  - "Book of Negroes"
+  - "Preston Nova Scotia Black"
+  - "Viola Desmond"
+  - "William Hall Victoria Cross"
+  - "Underground Railroad Canada"
+  - "Sierra Leone Nova Scotia settlers"
+  - "Black Canadians history"
+  - "Birchtown Nova Scotia"
+  - "Shelburne Nova Scotia Black"
+  - "Africville relocation"
+  - "Black Refugees War of 1812 Nova Scotia"
+  - "Maroons Nova Scotia"
+per_source_max: 40

@@ -1,0 +1,440 @@
+<?xml version="1.0"?>
+<zs:searchRetrieveResponse xmlns:zs="http://www.loc.gov/zing/srw/"><zs:version>1.1</zs:version><zs:numberOfRecords>12</zs:numberOfRecords><zs:records><zs:record><zs:recordSchema>marcxml</zs:recordSchema><zs:recordPacking>xml</zs:recordPacking><zs:recordData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>01522cam a22003857i 4500</leader>
+  <controlfield tag="001">18458171</controlfield>
+  <controlfield tag="005">20250607062936.0</controlfield>
+  <controlfield tag="008">150121s2014    nscab  j b    001 0 eng  </controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">18458171</subfield>
+  </datafield>
+  <datafield tag="906" ind1=" " ind2=" ">
+    <subfield code="a">7</subfield>
+    <subfield code="b">cbc</subfield>
+    <subfield code="c">copycat</subfield>
+    <subfield code="d">3</subfield>
+    <subfield code="e">ncip</subfield>
+    <subfield code="f">20</subfield>
+    <subfield code="g">y-gencatlg</subfield>
+  </datafield>
+  <datafield tag="925" ind1="0" ind2=" ">
+    <subfield code="a">acquire</subfield>
+    <subfield code="b">1 shelf copy</subfield>
+    <subfield code="x">policy default</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="b">hc06 2015-01-21 z-processor (telework)</subfield>
+    <subfield code="i">hc08 2015-03-09 to BCCD</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="a">LCAP batch update 2025-06-02-04:00: LCAPM-893</subfield>
+  </datafield>
+  <datafield tag="010" ind1=" " ind2=" ">
+    <subfield code="a">  2014450157</subfield>
+  </datafield>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">9781771081665</subfield>
+    <subfield code="q">pbk.</subfield>
+  </datafield>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">9781771081672</subfield>
+    <subfield code="q">pdf</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)887390524</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">NLC</subfield>
+    <subfield code="b">eng</subfield>
+    <subfield code="c">NLC</subfield>
+    <subfield code="e">rda</subfield>
+    <subfield code="d">BTCTA</subfield>
+    <subfield code="d">CDX</subfield>
+    <subfield code="d">YDXCP</subfield>
+    <subfield code="d">DLC</subfield>
+  </datafield>
+  <datafield tag="042" ind1=" " ind2=" ">
+    <subfield code="a">lccopycat</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-cn-ns</subfield>
+  </datafield>
+  <datafield tag="050" ind1="0" ind2="0">
+    <subfield code="a">F1039.5.B57</subfield>
+    <subfield code="b">T39 2014</subfield>
+  </datafield>
+  <datafield tag="082" ind1="0" ind2="4">
+    <subfield code="a">j971.6/2500496</subfield>
+    <subfield code="2">23</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Taylor, Wanda Lauren,</subfield>
+    <subfield code="e">author.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Birchtown and the Black Loyalists /</subfield>
+    <subfield code="c">Wanda Lauren Taylor.</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="1">
+    <subfield code="a">Halifax, N.S. :</subfield>
+    <subfield code="b">Nimbus Publishing,</subfield>
+    <subfield code="c">[2014]</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">73 pages :</subfield>
+    <subfield code="b">illustrations (some colors), maps (some colors) ;</subfield>
+    <subfield code="c">22 cm</subfield>
+  </datafield>
+  <datafield tag="336" ind1=" " ind2=" ">
+    <subfield code="a">text</subfield>
+    <subfield code="b">txt</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="337" ind1=" " ind2=" ">
+    <subfield code="a">unmediated</subfield>
+    <subfield code="b">n</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="338" ind1=" " ind2=" ">
+    <subfield code="a">volume</subfield>
+    <subfield code="b">nc</subfield>
+    <subfield code="2">rdacarrier</subfield>
+  </datafield>
+  <datafield tag="504" ind1=" " ind2=" ">
+    <subfield code="a">Includes bibliographical references (page 68) and index.</subfield>
+  </datafield>
+  <datafield tag="530" ind1=" " ind2=" ">
+    <subfield code="a">Issued also in electronic format.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Black people</subfield>
+    <subfield code="z">Nova Scotia</subfield>
+    <subfield code="z">Birchtown</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="v">Juvenile literature.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Birchtown (N.S.)</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="v">Juvenile literature.</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Literature.</subfield>
+    <subfield code="2">lcgft</subfield>
+    <subfield code="0">https://id.loc.gov/authorities/genreForms/gf2014026415</subfield>
+  </datafield>
+  <datafield tag="923" ind1=" " ind2=" ">
+    <subfield code="a">purchase</subfield>
+    <subfield code="d">20141218</subfield>
+    <subfield code="n">I-20081239</subfield>
+    <subfield code="s">Coutts</subfield>
+  </datafield>
+</record></zs:recordData><zs:recordPosition>1</zs:recordPosition></zs:record><zs:record><zs:recordSchema>marcxml</zs:recordSchema><zs:recordPacking>xml</zs:recordPacking><zs:recordData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>02206cam a2200493 i 4500</leader>
+  <controlfield tag="001">17932177</controlfield>
+  <controlfield tag="005">20250607055203.7</controlfield>
+  <controlfield tag="008">131106t20132013nscabcf  b    001 0ceng  </controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">17932177</subfield>
+  </datafield>
+  <datafield tag="906" ind1=" " ind2=" ">
+    <subfield code="a">7</subfield>
+    <subfield code="b">cbc</subfield>
+    <subfield code="c">copycat</subfield>
+    <subfield code="d">2</subfield>
+    <subfield code="e">ncip</subfield>
+    <subfield code="f">20</subfield>
+    <subfield code="g">y-gencatlg</subfield>
+  </datafield>
+  <datafield tag="925" ind1="0" ind2=" ">
+    <subfield code="a">acquire</subfield>
+    <subfield code="b">1 shelf copy</subfield>
+    <subfield code="x">policy default</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="b">hc14 2013-11-06 z-processor</subfield>
+    <subfield code="i">hc08 2013-11-21 to BCCD</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="a">LCAP batch update 2025-06-02-04:00: LCAPM-893</subfield>
+  </datafield>
+  <datafield tag="010" ind1=" " ind2=" ">
+    <subfield code="a">  2013432814</subfield>
+  </datafield>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">9781771080163</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)823506283</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">NLC</subfield>
+    <subfield code="b">eng</subfield>
+    <subfield code="c">NLC</subfield>
+    <subfield code="e">rda</subfield>
+    <subfield code="d">OCLCO</subfield>
+    <subfield code="d">YDXCP</subfield>
+    <subfield code="d">SNK</subfield>
+    <subfield code="d">U3G</subfield>
+    <subfield code="d">CN8ML</subfield>
+    <subfield code="d">VP@</subfield>
+    <subfield code="d">CDX</subfield>
+    <subfield code="d">WIH</subfield>
+    <subfield code="d">C7D</subfield>
+    <subfield code="d">DLC</subfield>
+  </datafield>
+  <datafield tag="042" ind1=" " ind2=" ">
+    <subfield code="a">lccopycat</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-cn-ns</subfield>
+  </datafield>
+  <datafield tag="050" ind1="0" ind2="0">
+    <subfield code="a">E263.N9</subfield>
+    <subfield code="b">W55 2013</subfield>
+  </datafield>
+  <datafield tag="082" ind1="0" ind2="4">
+    <subfield code="a">971.6/00496</subfield>
+    <subfield code="2">23</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Whitehead, Ruth Holmes,</subfield>
+    <subfield code="e">author.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Black Loyalists :</subfield>
+    <subfield code="b">southern settlers of Nova Scotia's first free black communities /</subfield>
+    <subfield code="c">Ruth Holmes Whitehead.</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="1">
+    <subfield code="a">Halifax, NS :</subfield>
+    <subfield code="b">Nimbus Publishing,</subfield>
+    <subfield code="c">[2013]</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="4">
+    <subfield code="c">&#xA9;2013</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">xiv, 240 pages, 16 unnumbered pages of plates :</subfield>
+    <subfield code="b">illustrations (some colour), maps (1 colour), portraits (1 colour) ;</subfield>
+    <subfield code="c">24 cm.</subfield>
+  </datafield>
+  <datafield tag="336" ind1=" " ind2=" ">
+    <subfield code="a">text</subfield>
+    <subfield code="b">txt</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="337" ind1=" " ind2=" ">
+    <subfield code="a">unmediated</subfield>
+    <subfield code="b">n</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="338" ind1=" " ind2=" ">
+    <subfield code="a">volume</subfield>
+    <subfield code="b">nc</subfield>
+    <subfield code="2">rdacarrier</subfield>
+  </datafield>
+  <datafield tag="504" ind1=" " ind2=" ">
+    <subfield code="a">Includes bibliographical references (p. [203]-229)  and index.</subfield>
+  </datafield>
+  <datafield tag="530" ind1=" " ind2=" ">
+    <subfield code="a">Issued also in electronic formats.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="5">
+    <subfield code="a">Black loyalists</subfield>
+    <subfield code="z">Nova Scotia</subfield>
+    <subfield code="x">History.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="5">
+    <subfield code="a">Black loyalists</subfield>
+    <subfield code="z">Nova Scotia</subfield>
+    <subfield code="v">Biography.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="6">
+    <subfield code="a">Loyalistes noirs ame&#x301;ricains</subfield>
+    <subfield code="z">Nouvelle-E&#x301;cosse</subfield>
+    <subfield code="x">Histoire.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="6">
+    <subfield code="a">Loyalistes noirs ame&#x301;ricains</subfield>
+    <subfield code="z">Nouvelle-E&#x301;cosse</subfield>
+    <subfield code="v">Biographies.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Nova Scotia</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">1775-1783.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">United States</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">Revolution, 1775-1783.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="5">
+    <subfield code="a">Nova Scotia</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">1784-1867.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="6">
+    <subfield code="a">Nouvelle-E&#x301;cosse</subfield>
+    <subfield code="x">Histoire</subfield>
+    <subfield code="y">1775-1783.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="6">
+    <subfield code="a">Nouvelle-E&#x301;cosse</subfield>
+    <subfield code="x">Histoire</subfield>
+    <subfield code="y">1784-1867.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="6">
+    <subfield code="a">E&#x301;tats-Unis</subfield>
+    <subfield code="x">Histoire</subfield>
+    <subfield code="y">1775-1783 (Re&#x301;volution)</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Biographies.</subfield>
+    <subfield code="2">lcgft</subfield>
+    <subfield code="0">https://id.loc.gov/authorities/genreForms/gf2014026049</subfield>
+  </datafield>
+  <datafield tag="776" ind1="0" ind2=" ">
+    <subfield code="a">Whitehead, Ruth Holmes.</subfield>
+    <subfield code="t">Black Loyalists.</subfield>
+    <subfield code="d">Halifax, N.S. : Nimbus Pub., 2013.</subfield>
+    <subfield code="w">(CaOONL)20129073695</subfield>
+  </datafield>
+  <datafield tag="923" ind1=" " ind2=" ">
+    <subfield code="a">Purchase</subfield>
+    <subfield code="d">20131024</subfield>
+    <subfield code="n">I-20070469</subfield>
+    <subfield code="s">Coutts</subfield>
+  </datafield>
+</record></zs:recordData><zs:recordPosition>2</zs:recordPosition></zs:record><zs:record><zs:recordSchema>marcxml</zs:recordSchema><zs:recordPacking>xml</zs:recordPacking><zs:recordData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>01654cam a2200409 a 4500</leader>
+  <controlfield tag="001">3089970</controlfield>
+  <controlfield tag="005">20250607144424.1</controlfield>
+  <controlfield tag="008">980824s1999    nyu      b    001 0 eng  </controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">3089970</subfield>
+  </datafield>
+  <datafield tag="906" ind1=" " ind2=" ">
+    <subfield code="a">7</subfield>
+    <subfield code="b">cbc</subfield>
+    <subfield code="c">orignew</subfield>
+    <subfield code="d">1</subfield>
+    <subfield code="e">ocip</subfield>
+    <subfield code="f">19</subfield>
+    <subfield code="g">y-gencatlg</subfield>
+  </datafield>
+  <datafield tag="925" ind1="0" ind2=" ">
+    <subfield code="a">acquire</subfield>
+    <subfield code="b">2 shelf copies</subfield>
+    <subfield code="x">policy default</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="a">pc17 to la00 08-24-98; lk09 08-25-98; lk29 (E277) 08-28-98; to SL 08-28-98; lh37 09-01-98; CIP ver lj15/13 05-25-99;</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="a">LCAP batch update 2025-06-02-04:00: LCAPM-644</subfield>
+  </datafield>
+  <datafield tag="010" ind1=" " ind2=" ">
+    <subfield code="a">   98041807 </subfield>
+  </datafield>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">081532748X</subfield>
+    <subfield code="q">alk. paper</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="9">(DLC)   98041807</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">DLC</subfield>
+    <subfield code="c">DLC</subfield>
+    <subfield code="d">DLC</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-us---</subfield>
+  </datafield>
+  <datafield tag="050" ind1="0" ind2="0">
+    <subfield code="a">E277</subfield>
+    <subfield code="b">.M78 1999</subfield>
+  </datafield>
+  <datafield tag="082" ind1="0" ind2="0">
+    <subfield code="a">973.3/46</subfield>
+    <subfield code="2">21</subfield>
+  </datafield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Moving on :</subfield>
+    <subfield code="b">Black loyalists in the Afro-Atlantic world /</subfield>
+    <subfield code="c">edited by John W. Pulis.</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">New York :</subfield>
+    <subfield code="b">Garland Pub.,</subfield>
+    <subfield code="c">1999.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">xxiv, 224 p. ;</subfield>
+    <subfield code="c">23 cm.</subfield>
+  </datafield>
+  <datafield tag="336" ind1=" " ind2=" ">
+    <subfield code="a">text</subfield>
+    <subfield code="b">txt</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="337" ind1=" " ind2=" ">
+    <subfield code="a">unmediated</subfield>
+    <subfield code="b">n</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="338" ind1=" " ind2=" ">
+    <subfield code="a">volume</subfield>
+    <subfield code="b">nc</subfield>
+    <subfield code="2">rdacarrier</subfield>
+  </datafield>
+  <datafield tag="440" ind1=" " ind2="0">
+    <subfield code="a">Crosscurrents in African American history ;</subfield>
+    <subfield code="v">v. 4</subfield>
+  </datafield>
+  <datafield tag="440" ind1=" " ind2="0">
+    <subfield code="a">Garland reference library of the humanities ;</subfield>
+    <subfield code="v">v. 2049</subfield>
+  </datafield>
+  <datafield tag="504" ind1=" " ind2=" ">
+    <subfield code="a">Includes bibliographical references and index.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">African American loyalists</subfield>
+    <subfield code="x">History.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">African diaspora</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">18th century.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">African diaspora</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">19th century.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">United States</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">Revolution, 1775-1783</subfield>
+    <subfield code="x">Participation, African American.</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2=" ">
+    <subfield code="a">Pulis, John W.</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2="2">
+    <subfield code="3">Publisher description</subfield>
+    <subfield code="u">http://www.loc.gov/catdir/enhancements/fy0652/98041807-d.html</subfield>
+  </datafield>
+  <datafield tag="984" ind1=" " ind2=" ">
+    <subfield code="a">gsl</subfield>
+  </datafield>
+  <datafield tag="991" ind1=" " ind2=" ">
+    <subfield code="b">c-GenColl</subfield>
+    <subfield code="h">E277</subfield>
+    <subfield code="i">.M78 1999</subfield>
+    <subfield code="t">Copy 1</subfield>
+    <subfield code="w">BOOKS</subfield>
+  </datafield>
+</record></zs:recordData><zs:recordPosition>3</zs:recordPosition></zs:record></zs:records><zs:nextRecordPosition>4</zs:nextRecordPosition><zs:echoedSearchRetrieveRequest><zs:version>1.1</zs:version><zs:query>"Black Loyalists"</zs:query><zs:maximumRecords>3</zs:maximumRecords><zs:recordPacking>xml</zs:recordPacking><zs:recordSchema>marcxml</zs:recordSchema></zs:echoedSearchRetrieveRequest></zs:searchRetrieveResponse>
