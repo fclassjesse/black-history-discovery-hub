@@ -1,0 +1,21 @@
+# Query expansion (natural-language mode only). Each group lists names that refer to the same
+# place / people / topic across institutions and languages. Advanced Search never uses this.
+# Order matters: canonical English name first, canonical French name second (expansion keeps the first
+# three other names of a matched group), then variants. Matching ignores case and accents.
+groups:
+  - [Africville, "relocalisation d'Africville", "Africville relocation", "Africville Halifax", "déplacement d'Africville"]
+  - ["Black Loyalists", "Loyalistes noirs", "Black Loyalist", "loyalist refugees", "Loyaliste noir", "réfugiés loyalistes"]
+  - ["African Nova Scotian", "Néo-Écossais d'origine africaine", "African Nova Scotians", "Black Nova Scotian", "Black Nova Scotians", "Nova Scotia Black people", "Néo-Écossais noirs", "Afro-Néo-Écossais"]
+  - ["Preston", "Preston Nouvelle-Écosse", "North Preston", "East Preston", "Preston Nova Scotia"]
+  - ["Book of Negroes", "Livre des Noirs", "Carleton's Book of Negroes"]
+  - ["Birchtown", "Birchtown Nouvelle-Écosse", "Birchtown Nova Scotia", "Shelburne Black Loyalists", "Loyalistes noirs de Shelburne"]
+  - ["Viola Desmond", "Desmond, Viola"]
+  - ["William Hall", "William Hall VC", "Hall, William, 1827-1904"]
+  - ["Underground Railroad", "Chemin de fer clandestin", "Underground Railway", "fugitive slaves Canada", "esclaves fugitifs Canada"]
+  - ["Black Refugees", "Réfugiés noirs", "War of 1812 Black refugees", "Refugees of 1812", "réfugiés noirs de la guerre de 1812", "Réfugiés de 1812"]
+  - ["Sierra Leone", "Néo-Écossais en Sierra Leone", "Freetown settlers", "Nova Scotian settlers Sierra Leone", "colons de Freetown"]
+  - ["Jamaican Maroons", "Marrons jamaïcains", "Maroons Nova Scotia", "Trelawny Maroons", "Marrons de la Nouvelle-Écosse", "Marrons de Trelawny"]
+  - ["Nova Scotia", "Nouvelle-Écosse"]
+  - ["Halifax", "Halifax Nouvelle-Écosse", "Halifax Nova Scotia"]
+  - ["slavery", "esclavage", "enslaved people", "personnes esclavisées"]
+  - ["Black history", "histoire des Noirs", "African Canadian history", "histoire afro-canadienne"]

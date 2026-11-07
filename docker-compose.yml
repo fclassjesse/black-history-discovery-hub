@@ -1,0 +1,13 @@
+# Optional: Postgres 16 + pgvector for Docker users (the default setup uses the embedded `make db` instead).
+# Then set DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/bhdh in .env.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bhdh
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+volumes:
+  pgdata: {}

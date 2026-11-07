@@ -1,0 +1,460 @@
+{
+  "results" :
+    [
+      {
+        "resource" :
+          {
+            "name" : "African Nova Scotian Family Names by Region",
+            "id" : "kbzq-tfz7",
+            "resource_name" : null,
+            "parent_fxf" : [],
+            "description" : "The dataset provides the predominate and traditional family names of African Nova Scotians in 6 regions in Nova Scotia. The regions consist of Halifax Metro, South Shore and Yarmouth and Acadian Shore, Bay of Fundy and Annapolis Valley, Northumberland Shore, Eastern Shore and Cape Breton Island. Within all these regions you find 48+ traditional African Nova Scotian communities. The dataset will also provide the communities you can find in each of the six regions.",
+            "attribution" : null,
+            "attribution_link" : null,
+            "contact_email" : null,
+            "type" : "dataset",
+            "updatedAt" : "2022-08-24T11:37:48.000Z",
+            "createdAt" : "2017-01-20T18:59:24.000Z",
+            "metadata_updated_at" : "2022-08-24T11:37:48.000Z",
+            "data_updated_at" : "2017-01-25T14:59:30.000Z",
+            "page_views" :
+              {
+                "page_views_last_week" : 52,
+                "page_views_last_month" : 286,
+                "page_views_total" : 15976,
+                "page_views_last_week_log" : 5.7279204545632,
+                "page_views_last_month_log" : 8.16490692667569,
+                "page_views_total_log" : 13.963708918513753
+              },
+            "columns_name" :
+              [
+                "Regions",
+                "African NS Communities in the Region",
+                "Family Names"
+              ],
+            "columns_field_name" :
+              [
+                "regions",
+                "african_ns_communities_in_the_region",
+                "family_names"
+              ],
+            "columns_datatype" : [ "Text", "Text", "Text" ],
+            "columns_description" : [ "", "", "" ],
+            "columns_format" : [ {}, {}, {} ],
+            "download_count" : 1793,
+            "provenance" : "official",
+            "lens_view_type" : "tabular",
+            "lens_display_type" : "table",
+            "locked" : false,
+            "backend" : "nbe",
+            "blob_mime_type" : null,
+            "hide_from_data_json" : false,
+            "publication_date" : "2017-01-25T14:59:46.000Z"
+          },
+        "classification" :
+          {
+            "categories" : [],
+            "tags" : [],
+            "domain_category" : "Population and Demographics",
+            "domain_tags" :
+              [
+                "jordantown",
+                "inglewood",
+                "hansport",
+                "halifax",
+                "guysborough",
+                "greenville",
+                "granville ferry",
+                "glacey bay",
+                "gibson woods",
+                "isaac's harbour",
+                "kentville",
+                "lake loon",
+                "lequille",
+                "lincolnville",
+                "litchfield",
+                "liverpool",
+                "lucusville",
+                "manchester",
+                "maroon hill",
+                "metro",
+                "middleton",
+                "mulgrave",
+                "name",
+                "names",
+                "new glosgow",
+                "newport",
+                "new waterford",
+                "north preston",
+                "north sydney",
+                "northumberland shore",
+                "parrsboro",
+                "pictou",
+                "region",
+                "river hebert",
+                "sand hill (amherst)",
+                "shelburne",
+                "south shore",
+                "southville (danvers)",
+                "springhill",
+                "summer",
+                "sunnyville",
+                "sydney",
+                "three miles plains",
+                "tracadie area (monastery)",
+                "trenton",
+                "truro",
+                "upper big tracadie",
+                "upper hammonds plains",
+                "valley",
+                "weymouth falls",
+                "whitney pier",
+                "yarmouth",
+                "five miles plains",
+                "family names",
+                "east preston",
+                "hassett",
+                "eastern shore",
+                "delaps cove",
+                "dartmouth",
+                "conway",
+                "cobequid rd.",
+                "cherry brook",
+                "cape breton island",
+                "cambridge",
+                "bridgetown",
+                "boylston",
+                "birchtown",
+                "beechville",
+                "bear river",
+                "bay of fundy",
+                "antigonish",
+                "annapolis valley",
+                "annapolis royal",
+                "annapolis",
+                "aldershot",
+                "africville",
+                "african nova scotian",
+                "acadian shore",
+                "acaciaville"
+              ],
+            "domain_metadata" :
+              [
+                {
+                  "key" : "Detailed-Metadata_Geographic-Region-Name",
+                  "value" : "Nova Scotia"
+                },
+                {
+                  "key" : "Detailed-Metadata_Department",
+                  "value" : "Communities, Culture, Tourism and Heritage"
+                },
+                {
+                  "key" : "Detailed-Metadata_Related-Documents",
+                  "value" : "Cultural Assets of Nova Scotia: African Nova Scotian Tourism Guide"
+                },
+                {
+                  "key" : "Detailed-Metadata_Usage-Considerations",
+                  "value" : "Geneaology, Ancentry, History and Culture, Heritage, Knowledge"
+                },
+                {
+                  "key" : "Detailed-Metadata_Time-Period-Coverage",
+                  "value" : "1700-01-01/2017-02-05"
+                },
+                { "key" : "Detailed-Metadata_Language", "value" : "eng" },
+                {
+                  "key" : "Detailed-Metadata_Frequency",
+                  "value" : "As needed"
+                }
+              ]
+          },
+        "metadata" :
+          {
+            "domain" : "data.novascotia.ca",
+            "license" : "Nova Scotia Open Government Licence"
+          },
+        "permalink" : "https://data.novascotia.ca/d/kbzq-tfz7",
+        "link" : "https://data.novascotia.ca/Population-and-Demographics/African-Nova-Scotian-Family-Names-by-Region/kbzq-tfz7",
+        "owner" :
+          {
+            "id" : "9pyy-md4w",
+            "user_type" : "interactive",
+            "display_name" : "Open Data Nova Scotia"
+          },
+        "creator" :
+          {
+            "id" : "9pyy-md4w",
+            "user_type" : "interactive",
+            "display_name" : "Open Data Nova Scotia"
+          }
+      },
+      {
+        "resource" :
+          {
+            "name" : "African-Nova Scotian Scholarships Awarded",
+            "id" : "nd2y-v67i",
+            "resource_name" : null,
+            "parent_fxf" : [],
+            "description" : "African-Nova Scotian Scholarships Awarded to students in post-secondary education",
+            "attribution" : null,
+            "attribution_link" : null,
+            "contact_email" : null,
+            "type" : "dataset",
+            "updatedAt" : "2026-07-21T11:55:38.000Z",
+            "createdAt" : "2017-10-20T19:06:53.000Z",
+            "metadata_updated_at" : "2026-07-21T11:55:37.000Z",
+            "data_updated_at" : "2026-07-21T11:55:38.000Z",
+            "page_views" :
+              {
+                "page_views_last_week" : 10,
+                "page_views_last_month" : 44,
+                "page_views_total" : 1698,
+                "page_views_last_week_log" : 3.4594316186372978,
+                "page_views_last_month_log" : 5.491853096329675,
+                "page_views_total_log" : 10.730470137184222
+              },
+            "columns_name" :
+              [
+                "Scholarships",
+                "Year",
+                "RCE/CSAP Name",
+                "Scholarships Awarded"
+              ],
+            "columns_field_name" :
+              [
+                "scholarships",
+                "year",
+                "rce_csap_name",
+                "scholarships_awarded"
+              ],
+            "columns_datatype" : [ "Text", "Text", "Text", "Number" ],
+            "columns_description" : [ "", "", "", "" ],
+            "columns_format" :
+              [
+                {},
+                {},
+                {},
+                { "decimalSeparator" : ".", "groupSeparator" : "," }
+              ],
+            "download_count" : 1192,
+            "provenance" : "official",
+            "lens_view_type" : "tabular",
+            "lens_display_type" : "table",
+            "locked" : false,
+            "backend" : "nbe",
+            "blob_mime_type" : null,
+            "hide_from_data_json" : false,
+            "publication_date" : "2024-10-07T13:58:52.000Z"
+          },
+        "classification" :
+          {
+            "categories" : [],
+            "tags" : [],
+            "domain_category" : "Education - Primary to Grade 12",
+            "domain_tags" :
+              [ "scholarship", "african nova scotian", "student", "school" ],
+            "domain_metadata" :
+              [
+                {
+                  "key" : "Detailed-Metadata_Department",
+                  "value" : "Education and Early Childhood Development"
+                },
+                {
+                  "key" : "Detailed-Metadata_Usage-Considerations",
+                  "value" : "[*Only one Performing Arts Award is awarded each year][**Short-Term Job Training Grant - offered from 2005/06 to 2014/15]. As of April 1, 2018 Nova Scotia Regional School Boards became Regional Centres for Education (RCE). Geographical areas for regional centres and their historical school boards can be found here: https://novascotia.ca/just/regulations/regs/edregcen.htm . The Conseil scolaire acadien provincial (CSAP) remained the same."
+                },
+                {
+                  "key" : "Detailed-Metadata_Time-Period-Coverage",
+                  "value" : "1996/1997 to 2025/2026"
+                },
+                { "key" : "Detailed-Metadata_Language", "value" : "eng" },
+                {
+                  "key" : "Detailed-Metadata_Frequency",
+                  "value" : "Annually"
+                }
+              ]
+          },
+        "metadata" :
+          {
+            "domain" : "data.novascotia.ca",
+            "license" : "Nova Scotia Open Government Licence"
+          },
+        "permalink" : "https://data.novascotia.ca/d/nd2y-v67i",
+        "link" : "https://data.novascotia.ca/Education-Primary-to-Grade-12/African-Nova-Scotian-Scholarships-Awarded/nd2y-v67i",
+        "owner" :
+          {
+            "id" : "9pyy-md4w",
+            "user_type" : "interactive",
+            "display_name" : "Open Data Nova Scotia"
+          },
+        "creator" :
+          {
+            "id" : "9pyy-md4w",
+            "user_type" : "interactive",
+            "display_name" : "Open Data Nova Scotia"
+          }
+      },
+      {
+        "resource" :
+          {
+            "name" : "\"Book of Negroes\", 1783",
+            "id" : "xxcy-v3fh",
+            "resource_name" : null,
+            "parent_fxf" : [],
+            "description" : "The \"Book of Negroes\" is the single most important document relating to the immigration of African Americans to Nova Scotia following the War of Independence. It provides the names of 3000 black refugees registered on board the vessels in which they sailed from New York to Nova Scotia between 23 April and 30 November 1783.",
+            "attribution" : null,
+            "attribution_link" : null,
+            "contact_email" : null,
+            "type" : "dataset",
+            "updatedAt" : "2025-04-29T12:55:37.000Z",
+            "createdAt" : "2016-10-25T17:45:56.000Z",
+            "metadata_updated_at" : "2025-04-29T12:55:37.000Z",
+            "data_updated_at" : "2016-10-28T17:59:12.000Z",
+            "page_views" :
+              {
+                "page_views_last_week" : 26,
+                "page_views_last_month" : 119,
+                "page_views_total" : 8953,
+                "page_views_last_week_log" : 4.754887502163469,
+                "page_views_last_month_log" : 6.906890595608519,
+                "page_views_total_log" : 13.128316602903544
+              },
+            "columns_name" :
+              [
+                "ARage",
+                "ARpage",
+                "ID",
+                "ARname",
+                "ARcommander",
+                "ARvessel",
+                "ARs",
+                "ARgender",
+                "ARbound"
+              ],
+            "columns_field_name" :
+              [
+                "arage",
+                "arpage",
+                "id",
+                "arname",
+                "arcommander",
+                "arvessel",
+                "ars",
+                "argender",
+                "arbound"
+              ],
+            "columns_datatype" :
+              [
+                "Text",
+                "Number",
+                "Number",
+                "Text",
+                "Text",
+                "Text",
+                "Number",
+                "Text",
+                "Text"
+              ],
+            "columns_description" : [ "", "", "", "", "", "", "", "", "" ],
+            "columns_format" :
+              [
+                {
+                  "precisionStyle" : "standard",
+                  "noCommas" : "true",
+                  "align" : "left"
+                },
+                {
+                  "precisionStyle" : "standard",
+                  "noCommas" : "true",
+                  "align" : "left"
+                },
+                {
+                  "precisionStyle" : "standard",
+                  "noCommas" : "true",
+                  "align" : "left"
+                },
+                {},
+                {},
+                {},
+                {
+                  "precisionStyle" : "standard",
+                  "noCommas" : "true",
+                  "align" : "left"
+                },
+                {},
+                {}
+              ],
+            "download_count" : 3015,
+            "provenance" : "official",
+            "lens_view_type" : "tabular",
+            "lens_display_type" : "table",
+            "locked" : false,
+            "backend" : "nbe",
+            "blob_mime_type" : null,
+            "hide_from_data_json" : false,
+            "publication_date" : "2016-10-28T17:59:18.000Z"
+          },
+        "classification" :
+          {
+            "categories" : [],
+            "tags" : [],
+            "domain_category" : "Arts, Culture and History",
+            "domain_tags" :
+              [
+                "summer",
+                "nova scotia archives",
+                "immigrants",
+                "african nova scotian",
+                "american revolution",
+                "black history",
+                "genealogy"
+              ],
+            "domain_metadata" :
+              [
+                {
+                  "key" : "Detailed-Metadata_Geographic-Region-Name",
+                  "value" : "Nova Scotia, New Brunswick"
+                },
+                {
+                  "key" : "Detailed-Metadata_Department",
+                  "value" : "Service Nova Scotia"
+                },
+                {
+                  "key" : "Detailed-Metadata_Usage-Considerations",
+                  "value" : "'c m' or 'c f' denotes child male or child female, respectively."
+                },
+                {
+                  "key" : "Detailed-Metadata_Time-Period-Coverage",
+                  "value" : "1783"
+                },
+                { "key" : "Detailed-Metadata_Language", "value" : "eng" },
+                {
+                  "key" : "Detailed-Metadata_Frequency",
+                  "value" : "One-time"
+                }
+              ]
+          },
+        "metadata" :
+          {
+            "domain" : "data.novascotia.ca",
+            "license" : "Nova Scotia Open Government Licence"
+          },
+        "permalink" : "https://data.novascotia.ca/d/xxcy-v3fh",
+        "link" : "https://data.novascotia.ca/Arts-Culture-and-History/-Book-of-Negroes-1783/xxcy-v3fh",
+        "owner" :
+          {
+            "id" : "9pyy-md4w",
+            "user_type" : "interactive",
+            "display_name" : "Open Data Nova Scotia"
+          },
+        "creator" :
+          {
+            "id" : "9pyy-md4w",
+            "user_type" : "interactive",
+            "display_name" : "Open Data Nova Scotia"
+          }
+      }
+    ],
+  "resultSetSize" : 6,
+  "timings" : { "serviceMillis" : 46, "searchMillis" : [ 7, 13 ] },
+  "warnings" : []
+}

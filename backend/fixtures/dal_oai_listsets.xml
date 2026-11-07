@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2026-11-07T18:44:13Z</responseDate>
+  <request verb="ListSets">https://findingaids.library.dal.ca/;oai</request>
+  <ListSets>
+            <set>
+           <setSpec>oai:findingaids.library.dal.ca:nshd_2</setSpec>
+           <setName>David and Marilyn Janigan Map Collection</setName>
+        </set>
+            <set>
+           <setSpec>oai:findingaids.library.dal.ca:nshd_21</setSpec>
+           <setName>Solar Audio Recording Studio Collection</setName>
+        </set>
+            <set>
+           <setSpec>oai:findingaids.library.dal.ca:nshd_3792</setSpec>
+           <setName>Roscoe A. Fillmore Memorial Picnic Organizing Committee fonds</setName>
+        </set>
+            <set>
+           <setSpec>oai:findingaids.library.dal.ca:nshd_3806</setSpec>
+           <setName>Three letters to Dane Parker from Roscoe A. Fillmore</setName>
+        </set>
+  <resumptionToken>eyJjdXJzb3IiOjEwMH0=</resumptionToken>
+      </ListSets>
+</OAI-PMH>

@@ -1,0 +1,151 @@
+# Place gazetteer for deterministic entity extraction (app/services/entities.py).
+#
+# `communities`: African Nova Scotian communities. Source: Government of Nova Scotia Open Data,
+#   "African Nova Scotian Family Names by Region" (https://data.novascotia.ca/d/kbzq-tfz7), fetched 2026-11-07,
+#   column "African NS Communities in the Region", plus the historical settlements that recur in the catalogues
+#   (Birchtown, Tracadie, Sunnyville, Lincolnville, Loch Lomond, Whitney Pier) and the Preston/Hammonds Plains variants.
+# `places`: other places that recur in Black Nova Scotian / Black Canadian catalogue records (counties, towns,
+#   provinces, countries and cities tied to the Loyalist, Refugee, Maroon and Sierra Leone migrations).
+# Matching is whole-word and case-insensitive. Aliases map a variant to the canonical name on the left.
+
+communities:
+  - Africville
+  - Acaciaville
+  - Aldershot
+  - Annapolis Royal
+  - Bear River
+  - Beechville
+  - Birchtown
+  - Bridgetown
+  - Cherry Brook
+  - Cobequid Road
+  - Conway
+  - Dartmouth
+  - Delaps Cove
+  - East Preston
+  - Five Mile Plains
+  - Gibson Woods
+  - Granville Ferry
+  - Greenville
+  - Hantsport
+  - Hassett
+  - Inglewood
+  - Jordantown
+  - Kentville
+  - Lake Loon
+  - Lequille
+  - Lincolnville
+  - Litchfield
+  - Liverpool
+  - Loch Lomond
+  - Lucasville
+  - Maroon Hill
+  - Middleton
+  - Newport
+  - North Preston
+  - Parrsboro
+  - Preston
+  - River Hebert
+  - Shelburne
+  - Southville
+  - Springhill
+  - Sunnyville
+  - Three Mile Plains
+  - Tracadie
+  - Truro
+  - Upper Hammonds Plains
+  - Hammonds Plains
+  - Weymouth Falls
+  - Whitney Pier
+  - Yarmouth
+
+community_aliases:
+  "Cobequid Rd.": Cobequid Road
+  "Hansport": Hantsport
+  "Southville (Danvers)": Southville
+  "Three Miles Plains": Three Mile Plains
+  "Preston Township": Preston
+  "Africville, Halifax": Africville
+
+community_organisations:
+  - African United Baptist Association
+  - Black Cultural Centre for Nova Scotia
+  - Black United Front
+  - Nova Scotia Home for Colored Children
+  - Nova Scotia Association for the Advancement of Coloured People
+  - Africville Genealogy Society
+  - Black Loyalist Heritage Society
+  - Seaview African United Baptist Church
+  - Cornwallis Street Baptist Church
+
+places:
+  - Halifax
+  - Nova Scotia
+  - Cape Breton
+  - Sydney
+  - Guysborough
+  - Digby
+  - Annapolis Valley
+  - Hants County
+  - Kings County
+  - Lunenburg
+  - Pictou
+  - Antigonish
+  - New Glasgow
+  - Amherst
+  - Windsor
+  - Wolfville
+  - Port Mouton
+  - Chedabucto
+  - New Brunswick
+  - Saint John
+  - Fredericton
+  - Prince Edward Island
+  - Newfoundland
+  - Quebec
+  - Montreal
+  - Ontario
+  - Toronto
+  - Ottawa
+  - Chatham
+  - Buxton
+  - Dresden
+  - Amherstburg
+  - Windsor, Ontario
+  - Manitoba
+  - British Columbia
+  - Canada
+  - Sierra Leone
+  - Freetown
+  - Jamaica
+  - Trelawny
+  - Barbados
+  - Bermuda
+  - Chesapeake
+  - Virginia
+  - New York
+  - Boston
+  - Philadelphia
+  - Charleston
+  - Savannah
+  - London
+  - England
+  - Kew
+  - Liberia
+  - West Africa
+  - Guinea
+  - Ghana
+  - Nigeria
+  - Haiti
+  - Trinidad
+  - United States
+
+place_aliases:
+  "N.S.": Nova Scotia
+  "Nova Scotia (N.S.)": Nova Scotia
+  "Halifax (N.S.)": Halifax
+  "Halifax, N.S.": Halifax
+  "Sydney (N.S.)": Sydney
+  "Great Britain": England
+  "U.S.": United States
+  "USA": United States
