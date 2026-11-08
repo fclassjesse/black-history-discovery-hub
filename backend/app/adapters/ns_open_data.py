@@ -13,9 +13,21 @@ from typing import Any
 from app.adapters.base import ConnectorStatus, NormalizedRecord, SourceAdapter, register
 from app.services.http import BlockedError, get_http
 from app.services.normalize import clean, parse_year_range, truncate
+from app.services.textmatch import on_black_history_topic
+
+MAX_PAGES = 5
 
 CATALOG_URL = "https://data.novascotia.ca/api/catalog/v1"
 INSTITUTION_SLUG = "nova-scotia-open-data"
+
+
+def is_on_topic(raw: dict[str, Any]) -> bool:
+    """Socrata ranks loosely ("Black Nova Scotians" → payday lenders, bingo licences); keep only datasets whose own
+    name, description or tags name Black people or communities."""
+    r = raw.get("resource") or {}
+    cls = raw.get("classification") or {}
+    tags = " ".join(str(t) for t in (cls.get("domain_tags") or []) + (cls.get("tags") or []))
+    return on_black_history_topic(" ".join([clean(r.get("name")) or "", clean(r.get("description")) or "", tags]))
 
 
 class NsOpenDataAdapter(SourceAdapter):
@@ -48,15 +60,18 @@ class NsOpenDataAdapter(SourceAdapter):
     async def search(self, query: str, max_records: int = 20) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []
         offset = 0
-        while len(out) < max_records:
-            res = await get_http().get(CATALOG_URL, self._params(query, min(max_records - len(out), 100), offset), source=self.name)
+        for _ in range(MAX_PAGES):
+            if len(out) >= max_records:
+                break
+            res = await get_http().get(CATALOG_URL, self._params(query, 100, offset), source=self.name)
             if not res.ok:
                 raise RuntimeError(f"Socrata HTTP {res.status_code}")
             data = res.json()
             results = data.get("results") or []
             for r in results:
-                r["_provenance"] = res.provenance(self.name, query)
-                out.append(r)
+                if is_on_topic(r):
+                    r["_provenance"] = res.provenance(self.name, query)
+                    out.append(r)
             offset += len(results)
             if not results or offset >= int(data.get("resultSetSize") or 0):
                 break

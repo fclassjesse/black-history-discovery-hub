@@ -257,6 +257,26 @@ def test_ns_open_data_normalizes_recorded_dataset():
     from app.adapters.ns_open_data import NsOpenDataAdapter
 
     assert NsOpenDataAdapter._params("x", 5)["domains"] == "data.novascotia.ca"  # federated API pinned to NS
+    from app.adapters.ns_open_data import is_on_topic
+
+    assert is_on_topic(results[0])
+    assert not is_on_topic({"resource": {"name": "Licensed Payday Lenders in Nova Scotia", "description": "List of licensed payday lenders."}, "classification": {}})
+
+
+def test_ckan_open_canada_normalizes_recorded_package_and_filters_off_topic():
+    raw = json.loads((FIX / "ckan_open_canada_black_youth.json").read_text())["result"]["results"][0]
+    ad = get_adapter("ckan_open_canada")
+    rec = ad.normalize(raw)
+    assert rec.title.startswith("Black Youth and the Criminal Justice System")
+    assert rec.creators == ["Department of Justice Canada"]  # bilingual "EN | FR" org title → English part
+    assert rec.original_url == f"https://open.canada.ca/data/en/dataset/{raw['name']}"
+    assert rec.access_type == "online" and rec.holding_verification == "online_item"
+    assert rec.rights_status == "open_licence" and "Black youth" in rec.subjects
+    assert rec.institution_slug == "open-government-canada"
+    assert ad.keep(raw, "Black youth") and not ad.keep(raw, "ocean chemistry")
+    coral = {**raw, "title": "Black Coral Fields in the Scotian Shelf", "title_translated": {"en": "Black Coral Fields in the Scotian Shelf"}, "keywords": {"en": ["coral"]}, "tags": []}
+    assert not ad.keep(coral, "Black Nova Scotians")  # word match alone is not enough
+    assert not ad.keep({**raw, "organization": {"title": "Government of Nova Scotia | Gouvernement de la Nouvelle-Écosse"}}, "Black youth")
 
 
 def test_smithsonian_and_nypl_report_unconfigured_without_keys(monkeypatch):
@@ -288,4 +308,5 @@ def test_registry_has_all_twelve_connectors():
     assert {a.name for a in all_adapters()} == {
         "loc_sru", "loc_json", "internet_archive", "dpla", "europeana", "dal_oai",
         "tna_discovery", "wikimedia_commons", "harvard_librarycloud", "ns_open_data", "smithsonian", "nypl_digital",
+        "ckan_open_canada",
     }

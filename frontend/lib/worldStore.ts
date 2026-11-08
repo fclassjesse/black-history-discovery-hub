@@ -12,6 +12,8 @@ interface WorldState {
   mode: WorldMode;
   /** Whether the stage is visible behind the page at all. */
   visible: boolean;
+  /** A question was asked and the results are on their way: the world leans in while it waits. Cleared by publish(). */
+  pending: boolean;
   /** Fraction (0..1) of the viewport reserved on the left/top for overlays, so camera fits avoid them. */
   inset: { left: number; top: number; bottom: number; right: number };
   projection: WorldProjection;
@@ -20,6 +22,7 @@ interface WorldState {
   status: "booting" | "ready" | "error";
   publish: (pins: Pin[], recordsById: Map<string, RecordCard>, mode: WorldMode) => void;
   setVisible: (v: boolean) => void;
+  setPending: (v: boolean) => void;
   setInset: (inset: Partial<WorldState["inset"]>) => void;
   setProjection: (p: WorldProjection) => void;
   setWebgl: (ok: boolean) => void;
@@ -31,12 +34,14 @@ export const useWorld = create<WorldState>((set) => ({
   recordsById: new Map(),
   mode: "idle",
   visible: false,
+  pending: false,
   inset: { left: 0, top: 0, bottom: 0, right: 0 },
   projection: "globe",
   webgl: null,
   status: "booting",
-  publish: (pins, recordsById, mode) => set({ pins, recordsById, mode }),
+  publish: (pins, recordsById, mode) => set({ pins, recordsById, mode, pending: false }),
   setVisible: (visible) => set({ visible }),
+  setPending: (pending) => set({ pending }),
   setInset: (inset) => set((s) => ({ inset: { ...s.inset, ...inset } })),
   setProjection: (projection) => set({ projection }),
   setWebgl: (webgl) => set({ webgl }),

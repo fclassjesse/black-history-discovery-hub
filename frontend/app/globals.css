@@ -252,9 +252,10 @@ details > summary::-webkit-details-marker { display: none; }
 .logo-mark .bracket { font-family: var(--font-ui); font-weight: 300; font-size: 1.9rem; line-height: 0.8; transform: translateY(-1px); transition: transform var(--duration) var(--ease-bounce); display: inline-block; }
 .logo-mark:hover .bracket:first-child { transform: translate(-3px, -1px); }
 .logo-mark:hover .bracket:last-child { transform: translate(3px, -1px); }
-.menu-overlay { position: fixed; inset: 0; z-index: 50; background: var(--chalk); color: var(--ink); display: grid; grid-template-rows: var(--header-h) 1fr auto; clip-path: circle(0% at 50% 38px); }
+.menu-overlay { position: fixed; inset: 0; z-index: 50; background: var(--chalk); color: var(--ink); display: grid; grid-template-rows: var(--header-h) 1fr auto; overflow-y: auto; overscroll-behavior: contain; clip-path: circle(0% at 50% 38px); }
 .menu-overlay[data-open="true"] { clip-path: circle(150% at 50% 38px); }
-.menu-link { font-family: var(--font-display); font-size: clamp(2.4rem, 1.5rem + 5vw, 6rem); line-height: 1; letter-spacing: -0.03em; color: inherit; text-decoration: none; display: inline-flex; align-items: baseline; gap: 0.35em; }
+/* sized by the smaller of width and height so all six links fit a short laptop window without scrolling */
+.menu-link { font-family: var(--font-display); font-size: clamp(1.9rem, min(1.2rem + 4vw, 8.5vh), 5.5rem); white-space: nowrap; line-height: 1; letter-spacing: -0.03em; color: inherit; text-decoration: none; display: inline-flex; align-items: baseline; gap: 0.35em; }
 .menu-link small { font-family: var(--font-ui); font-size: 0.9rem; letter-spacing: 0; color: var(--ink-muted); }
 .menu-link:hover { color: var(--flame-deep); }
 .menu-link:hover .arrow { transform: translateX(10px) rotate(-10deg); }
@@ -355,6 +356,12 @@ html[data-world="on"] main, html[data-world="on"] main > div { pointer-events: n
 .pin-dot[data-precision="demo"] { background: var(--white); border-style: dashed; border-color: var(--stone); }
 
 /* ---------- search drawer ---------- */
+/* Desktop results layout: the ask bar floats at the top, the drawer is a fixed column below it with its own scroll.
+   Offsets live here (not in utility classes) so the drawer always has a top edge. */
+.results-askbar { position: fixed; left: var(--gutter); top: calc(var(--header-h) + 4px); z-index: 2; width: 460px; }
+.results-drawer { position: fixed; left: var(--gutter); top: calc(var(--header-h) + 120px); bottom: 1rem; width: 460px; display: flex; flex-direction: column; min-height: 0; }
+.results-drawer > .drawer-scroll { min-height: 0; }
+@media (min-width: 1280px) { .results-askbar, .results-drawer { width: 540px; } }
 .drawer { background: var(--cream); color: var(--ink); border-radius: var(--radius-plate); box-shadow: 0 30px 60px -30px rgba(27, 23, 21, 0.45); }
 .drawer-scroll { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--ink) transparent; }
 .online-panel { background: var(--moss); color: var(--cream); border-radius: var(--radius-plate); }
@@ -366,11 +373,39 @@ html[data-world="on"] main, html[data-world="on"] main > div { pointer-events: n
 .character-slot .nova { position: relative; z-index: 1; height: 100%; width: 100%; overflow: visible; }
 .character-slot .nova[data-framing="bust"] { overflow: hidden; }
 .character-dock { position: absolute; z-index: 20; pointer-events: none; }
+/* Nova: the designer's painted portrait, cut into layers (scripts/build_nova_layers.py) and rigged.
+   All layers are full-canvas; the head pivot (neck) comes from that script's printout. */
+.nova-portrait { position: relative; z-index: 1; height: 100%; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.np-figure { transform: translate(var(--np-lean-x, 0), var(--np-lean-y, 0)); transition: transform 900ms var(--ease-out); }
+.np-breathe, .np-head, .np-head-motion { position: absolute; inset: 0; }
+.np-breathe { transform-origin: 50% 100%; animation: np-breathe 4.2s ease-in-out infinite; }
+.np-head { transform-origin: 48.175% 74.102%; transform: translateY(var(--np-head-y, 0)) rotate(var(--np-head-turn, 0deg)); transition: transform 750ms cubic-bezier(0.34, 1.3, 0.64, 1); }
+.np-head-motion { transform-origin: 48.175% 74.102%; animation: np-sway 7.5s ease-in-out infinite; }
+.np-fill { position: absolute; inset: 0; display: block; width: 100%; height: 100%; user-select: none; -webkit-user-drag: none; }
+.np-eyes { position: absolute; inset: 0; }
+.np-lids { transition: transform 70ms ease-in; }
+.nova-portrait[data-near="true"] .np-breathe, .nova-portrait[data-state="attentive"] .np-breathe { animation-duration: 2.8s; }
+.nova-portrait[data-state="listening"] .np-breathe { animation-duration: 2.2s; }
+.nova-portrait[data-state="speaking"] .np-head-motion { animation: np-nod 0.95s ease-in-out infinite; }
+.nova-portrait[data-state="thinking"] .np-head-motion { animation: np-ponder 3s ease-in-out infinite; }
+.nova-portrait[data-state="celebrate"] .np-breathe { animation: np-hop 0.65s var(--ease-out) 2; }
+.nova-portrait[data-state="celebrate"] .np-head-motion { animation: np-cheer 0.65s ease-in-out 2; }
+.nova-portrait[data-state="abstain"] .np-head-motion { animation: np-shake 0.9s ease-in-out 1; }
+.nova-portrait-think { position: absolute; z-index: 2; top: 2%; left: 74%; display: flex; gap: 6px; padding: 8px 12px; background: var(--cream); border: 2.5px solid var(--ink); border-radius: 999px; }
+.nova-portrait-think i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+@keyframes np-breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.006); } } /* uniform scale only: never distort the painting */
+@keyframes np-sway { 0%, 100% { transform: rotate(0deg) translateX(0); } 30% { transform: rotate(0.9deg) translateX(1px); } 70% { transform: rotate(-0.8deg) translateX(-1px); } }
+@keyframes np-nod { 0%, 100% { transform: rotate(0deg) translateY(0); } 35% { transform: rotate(-0.8deg) translateY(3px); } 70% { transform: rotate(0.5deg) translateY(1px); } }
+@keyframes np-ponder { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-1.6deg) translateY(-1px); } }
+@keyframes np-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-12px); } }
+@keyframes np-cheer { 0%, 100% { transform: rotate(0deg); } 40% { transform: rotate(3deg); } }
+@keyframes np-shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-2.5deg); } 55% { transform: rotate(2deg); } 80% { transform: rotate(-1deg); } }
+
 .character-dock[data-layout="guide"] { position: fixed; left: calc(var(--gutter) + 436px); bottom: 0; width: 220px; height: 190px; z-index: 30; }
 @media (min-width: 1280px) { .character-dock[data-layout="guide"] { left: calc(var(--gutter) + 516px); } }
 @media (max-width: 1023px) { .character-dock[data-layout="guide"] { left: auto; right: 6px; bottom: 0; width: 128px; height: 110px; } }
 .stage { min-height: calc(100svh - var(--header-h)); }
-.stage-anchor { aspect-ratio: 3 / 4; }
+.stage-anchor { aspect-ratio: 1039 / 1200; } /* the portrait's own proportions */
 .stage { overflow: visible; }
 
 @keyframes nova-bob { 0%, 100% { transform: translateY(0) rotate(-0.6deg); } 50% { transform: translateY(-5px) rotate(0.6deg); } }
@@ -411,6 +446,27 @@ html[data-world="on"] main, html[data-world="on"] main > div { pointer-events: n
 /* MapLibre's cooperative-gesture hint is hidden (owner request 2026-11-07): ⌘/Ctrl + wheel still zooms, plain wheel still scrolls the page */
 .maplibregl-cooperative-gesture-screen { display: none !important; }
 
+/* ---------- arrival choreography (search results) ----------
+   Pins, the online panel and the record cards all land in the same beat as the camera move; nothing queues. */
+@layer components {
+@keyframes pin-ring { from { transform: translateX(-50%) scale(0.3); opacity: 0.9; } to { transform: translateX(-50%) scale(2.8); opacity: 0; } }
+.pin-ring { position: absolute; left: 50%; bottom: -5px; width: 26px; height: 11px; border: 2px solid var(--ink); border-radius: 50%; transform: translateX(-50%); opacity: 0; pointer-events: none; animation: pin-ring 1.1s var(--ease-out) 160ms both; }
+@keyframes rise-in { from { transform: translateY(26px) scale(0.97); opacity: 0; } to { transform: none; opacity: 1; } }
+.rise-in { animation: rise-in 0.7s var(--ease-out) both; }
+/* while the answer is on its way the directory pins step back; the new set lands together */
+.world-root .pin { transition: opacity 0.45s var(--ease-out); }
+.world-root[data-pending="true"] .pin { opacity: 0.25; }
+.cards-in > * { animation: rise-in 0.6s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 45ms); }
+/* skeleton: paper placeholders while the catalogues answer */
+@keyframes sk-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.sk { display: block; border-radius: 999px; background: linear-gradient(90deg, var(--chalk) 0%, var(--chalk-2) 40%, var(--chalk) 80%); background-size: 200% 100%; animation: sk-shimmer 1.6s linear infinite; }
+.sk-card { animation: rise-in 0.5s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 80ms); }
+@media (prefers-reduced-motion: reduce) {
+  .pin-ring { display: none; }
+  .rise-in, .cards-in > *, .sk, .sk-card { animation: none !important; opacity: 1; }
+}
+}
+
 /* ---------- cursor ---------- */
 .cursor-dot { position: fixed; left: 0; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); pointer-events: none; z-index: 90; transform: translate(-50%, -50%); mix-blend-mode: multiply; transition: width 200ms var(--ease-out), height 200ms var(--ease-out), background 200ms var(--ease-out), opacity 200ms; }
 .cursor-dot[data-hover="true"] { width: 44px; height: 44px; background: var(--sun); opacity: 0.85; }
@@ -439,7 +495,7 @@ html[data-world="on"] main, html[data-world="on"] main > div { pointer-events: n
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   .marquee-track { animation: none; }
-  .nova-body, .nova-lid, .nova-wave, .nova-puff, .nova-satchel { animation: none !important; }
+  .nova-body, .nova-lid, .nova-wave, .nova-puff, .nova-satchel, .np-breathe, .np-head-motion { animation: none !important; }
   .cursor-dot { display: none; }
 }
 

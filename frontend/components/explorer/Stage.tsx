@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { PushToTalk } from "@/components/guide/PushToTalk";
 import { WorldControls } from "@/components/world/WorldControls";
-import { NOVA_NAME } from "@/components/character/Nova";
 import { ensureGsap, prefersReducedMotion, useMagnetic } from "@/lib/motion";
 import { useWorld } from "@/lib/worldStore";
 import { institutionsToPins, useInstitutions } from "@/lib/useInstitutions";
@@ -45,7 +44,6 @@ export function Stage({ onAsk }: { onAsk: (question: string, input: "text" | "vo
     const gsap = ensureGsap();
     const ctx = gsap.context(() => {
       gsap.timeline({ defaults: { ease: "power3.out" } })
-        .from("[data-stage-tag]", { y: -16, opacity: 0, duration: 0.5 }, 0.1)
         .from("[data-stage-bubble]", { scale: 0.86, y: 24, opacity: 0, duration: 0.8, ease: "back.out(1.5)" }, 0.55)
         .from("[data-stage-title] > span", { yPercent: 110, opacity: 0, duration: 0.6, stagger: 0.06 }, 0.75)
         .from("[data-stage-form], [data-stage-chips]", { y: 16, opacity: 0, duration: 0.5, stagger: 0.1 }, 1)
@@ -64,16 +62,15 @@ export function Stage({ onAsk }: { onAsk: (question: string, input: "text" | "vo
   return (
     <section ref={rootRef} aria-labelledby="stage-heading" className="stage pointer-events-none relative flex flex-col px-[var(--gutter)] pt-2 on-flame lg:overflow-visible">
       <div className="stage-grid mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 pt-12 lg:grid-cols-12 lg:grid-rows-[minmax(0,1fr)_auto] lg:gap-x-4 lg:pt-0">
-        {/* Nova's spot: the dock positions her over this anchor. Head to toe, as tall as the stage, owning the left half;
-            a short ask bar sits under her and may cover her feet; the world owns the right half. */}
-        <div data-character-anchor data-stage-fade className="stage-anchor mx-auto w-[min(100%,clamp(280px,80vw,440px))] lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:-mt-12 lg:mx-0 lg:h-[calc(100%+3rem)] lg:w-auto lg:max-w-full lg:justify-self-center" aria-hidden />
+        {/* Nova's spot: the dock positions her over this anchor. Her portrait is centred over the ask bubble (same 6 columns),
+            which tucks just under her shoulders; the world owns the right half. */}
+        <div data-character-anchor data-stage-fade className="stage-anchor mx-auto w-[min(100%,clamp(280px,80vw,440px))] lg:col-span-6 lg:col-start-1 lg:row-start-1 lg:-mt-12 lg:mx-0 lg:h-[calc(100%+3rem)] lg:w-auto lg:max-w-full lg:justify-self-center" aria-hidden />
 
         <div data-stage-bubble className="bubble bubble-stage pointer-events-auto relative z-30 -mt-12 px-4 py-3 sm:px-5 lg:col-span-6 lg:col-start-1 lg:row-start-2 lg:-mt-24 lg:mb-4">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
             <h1 id="stage-heading" data-stage-title className="stage-title">
               {titleWords.map((w, i) => <span key={i} className={`inline-block ${i === titleWords.length - 1 ? "accent text-flame-deep" : ""}`}>{w}</span>)}
             </h1>
-            <p data-stage-tag className="kicker text-ink-muted">{t("stage.tag", { name: NOVA_NAME })}</p>
           </div>
           <form data-stage-form onSubmit={submit} role="search" aria-label={t("stage.formAria")} className="mt-2 flex items-start gap-2">
             <PushToTalk size="md" onInterim={(tr) => { setMode("voice"); setQ(tr); }} onTranscript={(tr) => { setMode("voice"); setQ(tr); }} />
@@ -89,7 +86,7 @@ export function Stage({ onAsk }: { onAsk: (question: string, input: "text" | "vo
           <div data-stage-chips className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
             <span className="text-ink-muted">{t("stage.try")}</span>
             {suggestions.map((s) => <button key={s} type="button" className="btn btn-secondary btn-sm" onClick={() => submit(undefined, s)}>{s}</button>)}
-            <Link href="/advanced" className="ml-auto underline">{t("stage.advanced")}</Link>
+            <Link href="/advanced" className="btn btn-secondary btn-sm ml-auto shrink-0"><span aria-hidden>⚙</span> {t("stage.advanced")}</Link>
           </div>
         </div>
       </div>

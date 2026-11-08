@@ -6,6 +6,9 @@ import { ensureGsap, prefersReducedMotion } from "@/lib/motion";
 
 export type DockLayout = "stage" | "guide";
 
+/** How far the ask bubble may overlap her portrait: just the patterned hem of her top. */
+const BUBBLE_OVERLAP_PX = 28;
+
 /**
  * One persistent home for Nova. On the stage she stands over an anchor element
  * (`[data-character-anchor]`, absolute within the explorer); in results mode she
@@ -31,6 +34,13 @@ export function CharacterDock({ layout }: { layout: DockLayout }) {
       el.style.top = `${a.top - r.top}px`;
       el.style.width = `${a.width}px`;
       el.style.height = `${a.height}px`;
+      // place her so the ask bubble only covers the bottom of her top, whatever the screen size.
+      // offsetTop (not getBoundingClientRect) so the bubble's entrance animation doesn't skew it.
+      const bubble = document.querySelector<HTMLElement>("[data-stage-bubble]");
+      if (bubble && bubble.offsetParent === anchor.offsetParent) {
+        const lift = anchor.offsetTop + anchor.offsetHeight - bubble.offsetTop - BUBBLE_OVERLAP_PX;
+        el.style.setProperty("--nova-lift", `${lift}px`); // negative = the bubble sits lower: she drops to meet it
+      }
     };
 
     el.dataset.layout = layout;

@@ -2,7 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { apiGet, apiJson, qs } from "@/lib/api";
+import { apiGetShared, apiPostShared } from "@/lib/api";
+import { searchPath } from "@/lib/searchRequest";
 import { useSelection } from "@/lib/store";
 import { useWorld } from "@/lib/worldStore";
 import type { GuideResponse, RecordCard as RecordCardT, SearchResponse } from "@/lib/types";
@@ -17,10 +18,11 @@ import { PageSurface } from "@/components/layout/PageSurface";
 import { ensureGsap, prefersReducedMotion } from "@/lib/motion";
 import { character } from "@/lib/character";
 import { Link, useFormat, useHref, useT } from "@/lib/i18n";
+import { DESKTOP_QUERY, useMediaQuery } from "@/lib/useMediaQuery";
 
 const DRAWER_LG = 460;
 const DRAWER_XL = 540;
-const TOPBAR = 170; // header + ask bar + its secondary row
+const TOPBAR = 178; // header + ask bar + its secondary row
 
 function filtersFromParams(sp: URLSearchParams): FilterState {
   const list = (k: string) => (sp.get(k) ?? "").split(",").filter(Boolean);
@@ -36,6 +38,29 @@ function Legend() {
       <li className="flex items-center gap-1"><span className="pin-dot" data-precision="approximate" /> {t("world.legend.approximate")}</li>
       <li className="flex items-center gap-1"><span className="pin-dot" data-precision="demo" /> {t("world.legend.demo")}</li>
     </ul>
+  );
+}
+
+/** Paper placeholders while the catalogues answer: the drawer is never an empty box with a spinner. */
+function Skeleton() {
+  return (
+    <div className="space-y-3" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="card sk-card" style={{ "--i": i } as React.CSSProperties}>
+          <div className="flex items-start gap-3">
+            <span className="sk h-11 w-11 shrink-0 rounded-2xl" />
+            <div className="min-w-0 flex-1 space-y-2.5 pt-1">
+              <div className="flex gap-1.5"><span className="sk h-5 w-16" /><span className="sk h-5 w-28" /></div>
+              <span className="sk h-6 w-[88%]" />
+              <span className="sk h-6 w-[58%]" />
+              <span className="sk h-3.5 w-[70%]" />
+            </div>
+          </div>
+          <span className="sk mt-4 h-3.5 w-[94%]" />
+          <span className="sk mt-2 h-3.5 w-[52%]" />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -67,8 +92,10 @@ export function SearchView() {
   useEffect(() => { filtersRef.current = filters; }, [filters]);
   const historyRef = useRef<{ question: string; answer: string; record_ids: string[] }[]>([]);
   const { reset, selectedRecordId, setHighlights } = useSelection();
-  const { publish, setInset } = useWorld();
+  const { publish, setInset, setPending } = useWorld();
   const rootRef = useRef<HTMLDivElement>(null);
+  // one layout branch is rendered, not both: 20 record cards, not 40
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
 
   // the draft follows the URL query (URL is the source of truth)
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -86,8 +113,7 @@ export function SearchView() {
     if (!root || prefersReducedMotion()) return;
     const gsap = ensureGsap();
     const ctx = gsap.context(() => {
-      gsap.from("[data-drawer]", { x: -48, opacity: 0, duration: 0.9, ease: "power3.out", delay: 0.1, clearProps: "all" });
-      gsap.from("[data-drawer-side]", { y: 24, opacity: 0, duration: 0.7, ease: "power3.out", delay: 0.5, stagger: 0.1, clearProps: "all" });
+      gsap.from("[data-drawer]", { x: -48, opacity: 0, duration: 0.7, ease: "power3.out", clearProps: "all" });
     }, root);
     return () => ctx.revert();
   }, []);
@@ -115,21 +141,17 @@ export function SearchView() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL-driven fetch; loading state must flip synchronously
     setLoading(true);
     setError(null);
+    setPending(true); // the world leans in until publish() hands it the pins
     reset();
-    const params = {
-      q, mode, page, page_size: 20, locale,
-      types: filters.types.join(","), access: filters.access.join(","), institution: filters.institution.join(","), lang: filters.lang.join(","),
-      verification: filters.verification.join(","), rights: filters.rights.join(","), country: filters.country.join(","),
-      people: filters.people.join(","), places: filters.places.join(","), communities: filters.communities.join(","), date_from: filters.date_from, date_to: filters.date_to,
-      identifier: sp.get("identifier") ?? "", location: sp.get("location") ?? "", source: sp.get("source") ?? "",
-    };
-    apiGet<SearchResponse>(`/api/search${qs(params)}`)
+    // shared: joins the request Explorer started at ask time (and React's dev double-run) instead of sending another
+    apiGetShared<SearchResponse>(searchPath(new URLSearchParams(sp.toString()), locale))
       .then((d) => { if (!cancelled) setData(d); })
-      .catch((e) => { if (!cancelled) setError(e.message); })
+      .catch((e) => { if (!cancelled) { setError(e.message); setPending(false); } })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sp, locale]);
+  useEffect(() => () => setPending(false), [setPending]);
 
   // guide (natural mode only, same path for text and voice); the UI locale is sent so the answer language can fall back to it
   useEffect(() => {
@@ -143,7 +165,7 @@ export function SearchView() {
       rights: f.rights.join(","), country: f.country.join(","), people: f.people.join(","), places: f.places.join(","), communities: f.communities.join(","),
       date_from: f.date_from, date_to: f.date_to,
     }).filter(([, v]) => v));
-    apiJson<GuideResponse>("/api/guide/ask", "POST", { question: q, input_mode: inputMode, filters: guideFilters, history: historyRef.current.slice(-3), locale })
+    apiPostShared<GuideResponse>("/api/guide/ask", { question: q, input_mode: inputMode, filters: guideFilters, history: historyRef.current.slice(-3), locale })
       .then((g) => {
         if (cancelled) return;
         setGuide(g);
@@ -215,12 +237,12 @@ export function SearchView() {
           </div>
         </div>
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2 pl-[6.75rem] text-xs">
-        {mode === "advanced" ? (<><span className="badge">{t("search.advancedBadge")}</span><Link href={`/advanced?${sp.toString()}`} className="btn btn-pill-chalk btn-sm">{t("search.edit")}</Link></>) : (<Link href="/advanced" className="btn btn-pill-chalk btn-sm">{t("search.advanced")}</Link>)}
+      <div className="mt-3 flex flex-nowrap items-center gap-2 overflow-x-auto pl-[6.75rem] text-xs [scrollbar-width:none]">
+        {mode === "advanced" ? (<><span className="badge">{t("search.advancedBadge")}</span><Link href={`/advanced?${sp.toString()}`} className="btn btn-secondary btn-sm shrink-0">{t("search.edit")}</Link></>) : (<Link href="/advanced" className="btn btn-secondary btn-sm shrink-0"><span aria-hidden>⚙</span> {t("search.advanced")}</Link>)}
         {data && data.alias_expansion.length > 0 && mode === "natural" && (
           <>
-            <span className="rounded-full bg-cream/80 px-2 py-1 text-ink-muted">{t("search.also")}</span>
-            {data.alias_expansion.map((term) => <span key={term} className="rounded-full bg-cream/80 px-2.5 py-1 text-ink">{term}</span>)}
+            <span className="shrink-0 whitespace-nowrap rounded-full bg-cream/80 px-2 py-1 text-ink-muted">{t("search.also")}</span>
+            {data.alias_expansion.map((term) => <span key={term} className="shrink-0 whitespace-nowrap rounded-full bg-cream/80 px-2.5 py-1 text-ink">{term}</span>)}
           </>
         )}
       </div>
@@ -248,9 +270,12 @@ export function SearchView() {
       <Legend />
       {filtersOpen && <div id="filters" className="plate-white p-4"><FilterRail facets={data?.facets ?? {}} value={filters} onChange={onFilters} unknownLocationCount={data?.unknown_location_count ?? 0} /></div>}
       {data && data.total === 0 && !loading && (<Notice>{t("search.noMatch")} <Link href="/about/sources" className="underline">{t("search.sourcesWeSearch")}</Link> {t("search.weSearch")}</Notice>)}
-      <div className="space-y-3">
-        {data?.results.map((r) => (<RecordCard key={r.id} record={r} citationNumbers={citationsByRecord.get(r.id)} />))}
-      </div>
+      {loading && !data && <Skeleton />}
+      {data && (
+        <div key={sp.toString()} className={`cards-in space-y-3 transition-opacity duration-300 ${loading ? "opacity-50" : ""}`} aria-busy={loading}>
+          {data.results.map((r, i) => (<div key={r.id} style={{ "--i": Math.min(i, 10) } as React.CSSProperties}><RecordCard record={r} citationNumbers={citationsByRecord.get(r.id)} /></div>))}
+        </div>
+      )}
       {alsoCited.length > 0 && (
         <div>
           <h3 className="kicker text-ink-muted">{t("search.alsoCited")}</h3>
@@ -271,17 +296,17 @@ export function SearchView() {
     <div ref={rootRef} className="pointer-events-none relative">
       <PageSurface tone="flame" />
       {/* ------------------------------------------------------------ desktop: everything floats over the world */}
-      <div className="hidden lg:block" style={{ height: "calc(100svh - var(--header-h))" }}>
-        <div data-drawer className="fixed left-[var(--gutter)] top-[calc(var(--header-h)+4px)] z-[2] w-[460px] xl:w-[540px]">{askBar}</div>
-        <div data-drawer className="drawer pointer-events-auto fixed bottom-4 left-[var(--gutter)] top-[calc(var(--header-h)+112px)] flex w-[460px] flex-col xl:w-[540px]">
+      {isDesktop && <div className="hidden lg:block" style={{ height: "calc(100svh - var(--header-h))" }}>
+        <div data-drawer className="results-askbar">{askBar}</div>
+        <div data-drawer className="drawer results-drawer pointer-events-auto">
           <div className="drawer-scroll flex-1 p-5 pr-4" data-lenis-prevent>{results}</div>
         </div>
         <WorldControls className="pointer-events-auto fixed right-[var(--gutter)] top-[calc(var(--header-h)+8px)]" />
         <div data-drawer-side className="pointer-events-auto fixed bottom-4 right-[var(--gutter)]">{data && <OnlinePanel records={data.online_resources} />}</div>
-      </div>
+      </div>}
 
       {/* ------------------------------------------------------------ mobile: the world on top, a sheet that scrolls over it */}
-      <div className="lg:hidden">
+      {!isDesktop && <div className="lg:hidden">
         <div className="px-[var(--gutter)] pt-2">{askBar}</div>
         <div className="h-[44svh]" aria-hidden />
         <div data-drawer className="drawer pointer-events-auto relative mx-2 mb-4 p-4">
@@ -290,7 +315,7 @@ export function SearchView() {
           {data && data.online_resources.length > 0 && <div className="mb-4"><OnlinePanel records={data.online_resources} docked={false} /></div>}
           {results}
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

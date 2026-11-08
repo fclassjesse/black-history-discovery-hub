@@ -189,7 +189,6 @@
       "est ",
       "conservée."
     ],
-    "tag": "{name} · prototype de découverte du BCCNS · toujours cité",
     "formAria": "Demander au guide ou chercher",
     "inputLabel": "Pose une question sur une personne, un lieu, une communauté, un sujet ou une date",
     "placeholder": "qu'est-il arrivé à Africville ?",
@@ -266,7 +265,6 @@
     "labelAsk": "Demander au guide ou chercher",
     "placeholder": "Une personne, un lieu, une communauté…",
     "ask": "Demander →",
-    "startOver": "← Recommencer",
     "advancedBadge": "avancée · sans IA",
     "edit": "Modifier",
     "advanced": "Recherche avancée",

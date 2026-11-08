@@ -1,4 +1,4 @@
-.PHONY: db db-stop migrate seed api worker web test build install
+.PHONY: db db-stop migrate seed curated api worker web test build install
 
 install:
 	cd backend && uv sync
@@ -15,6 +15,9 @@ migrate:
 
 seed:
 	cd backend && uv run python scripts/seed.py
+
+curated:
+	cd backend && uv run python scripts/load_curated.py
 
 api:
 	cd backend && uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload

@@ -11,6 +11,7 @@ import { applyPaperAtlas } from "@/components/world/worldPalette";
 import { worldHandle } from "@/components/world/worldHandle";
 import { PinMarker } from "@/components/world/PinMarker";
 import { GlobeHalo } from "@/components/world/GlobeHalo";
+import { arrivalCoords, easeToBounds } from "@/components/world/worldCamera";
 import { character } from "@/lib/character";
 import type { Pin } from "@/lib/types";
 import { useT } from "@/lib/i18n";
@@ -23,8 +24,27 @@ const IDLE_SPIN_PERIOD_S = 80;
 const RESUME_AFTER_MS = 4500;
 /** MapLibre's perspective camera shows a little less than a hemisphere: the visible rim is ~0.92 of the sphere radius at idle zooms. */
 const HORIZON_SHRINK = 0.92;
+/** While a search is in flight the camera glides toward Atlantic Canada / the US east coast, where most holders are. */
+const SEARCH_VANTAGE: [number, number] = [-64, 41];
+const PENDING_ZOOM_IN = 0.9;
+/** Long on purpose: still easing (slowly) when a slow search answers, so the arrival continues the motion. */
+const PENDING_GLIDE_MS = 7000;
+/** Arrival fit: a direct glide (no zoom-out-then-in arc) and a zoom cap that keeps tile loading light mid-flight. */
+const ARRIVAL_MS = 1700;
+const FIT_MAX_ZOOM = 8;
+const SINGLE_PIN_ZOOM = 7.5;
+const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 if (typeof window !== "undefined") maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+
+/** MapLibre's "hold ⌘/Ctrl and scroll to zoom" overlay is unwanted (owner request 2026-11-07). The handler rebuilds
+ *  the element every time cooperative gestures are re-enabled, so it is hidden inline here as well as in globals.css. */
+function hideGestureHint(map: MLMap) {
+  map.getContainer().querySelectorAll<HTMLElement>(".maplibregl-cooperative-gesture-screen").forEach((el) => {
+    el.style.display = "none";
+  });
+}
 
 function hasWebGL(): boolean {
   try {
@@ -52,7 +72,7 @@ export default function WorldGlobe() {
   const hoverRef = useRef<string | null>(null);
   useEffect(() => { hoverRef.current = hoverId; }, [hoverId]);
 
-  const { pins, recordsById, mode, inset, projection, setWebgl, setStatus } = useWorld();
+  const { pins, recordsById, mode, inset, projection, pending, setWebgl, setStatus } = useWorld();
   const { selectedInstitutionId, selectInstitution, focusInstitutionIds, selectedRecordId } = useSelection();
 
   // ---- create the map once
@@ -76,6 +96,7 @@ export default function WorldGlobe() {
       fadeDuration: 200,
       canvasContextAttributes: { antialias: true, alpha: true },
     });
+    hideGestureHint(map);
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-left");
     map.on("style.load", () => {
       applyPaperAtlas(map);
@@ -124,13 +145,26 @@ export default function WorldGlobe() {
     map.dragPan.enable();
     map.dragRotate.enable();
     map.touchZoomRotate.enable();
-    if (mode === "idle") { map.cooperativeGestures.enable(); map.keyboard.disable(); }
+    if (mode === "idle") { map.cooperativeGestures.enable(); hideGestureHint(map); map.keyboard.disable(); }
     else { map.cooperativeGestures.disable(); map.keyboard.enable(); }
   }, [mode, ready]);
+
+  // ---- anticipation: the moment a question is asked the world stops turning and starts one long, decelerating glide
+  // toward the collection's home waters. The search can take a few seconds; the camera must still be moving (slowly)
+  // when the results land so the fit continues the motion instead of starting from a frozen globe. Heading for the
+  // region where most holders are also shortens the final flight, so fewer tiles load mid-move.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !pending || prefersReducedMotion() || useWorld.getState().mode !== "idle") return;
+    lastInteractionRef.current = performance.now(); // pauses the idle spin (it also stays off while pending)
+    map.easeTo({ center: SEARCH_VANTAGE, zoom: map.getZoom() + PENDING_ZOOM_IN, pitch: 0, bearing: 0, duration: PENDING_GLIDE_MS, easing: easeOutQuint, essential: true });
+  }, [pending, ready]);
 
   // ---- camera: idle composition or fit to result pins (the first idle → results move is the long, cinematic one)
   const pinKey = pins.map((p) => `${p.institution.id}:${p.count}`).join("|");
   const prevModeRef = useRef<"idle" | "results">("idle");
+  /** True while the first idle → results fit is flying; guide focus waits for it instead of cutting it off. */
+  const arrivalRef = useRef(false);
   /** Once the idle composition is placed we leave the spinning world alone (pins re-publishing must not yank it back). */
   const idlePlacedRef = useRef(false);
   useEffect(() => {
@@ -139,7 +173,7 @@ export default function WorldGlobe() {
     const reduce = prefersReducedMotion();
     const arriving = prevModeRef.current === "idle" && mode === "results";
     prevModeRef.current = mode;
-    const dur = (normal: number) => (reduce ? 0 : arriving ? Math.max(normal, 2300) : normal);
+    const dur = (normal: number) => (reduce ? 0 : arriving ? Math.max(normal, 1700) : normal);
     const w = map.getContainer().clientWidth;
     const h = map.getContainer().clientHeight;
     const pad = { left: Math.round(inset.left * w), top: Math.round(inset.top * h), right: Math.round(inset.right * w), bottom: Math.round(inset.bottom * h) };
@@ -168,16 +202,24 @@ export default function WorldGlobe() {
       return;
     }
     idlePlacedRef.current = false;
-    const coords = pins.filter((p) => p.institution.latitude != null && p.institution.longitude != null).map((p) => [p.institution.longitude as number, p.institution.latitude as number] as [number, number]);
+    const coords = arrivalCoords(pins);
     const padding = { left: pad.left + 56, top: pad.top + 72, right: pad.right + 56, bottom: pad.bottom + 72 };
+    // Arrival: the pending glide is slowing down by now, so an ease-in-out picks it up without a jolt, and easeTo
+    // (linear path) avoids flyTo's zoom-out-then-in bump, which read as a hiccup and loaded extra tile levels.
+    const ease = { duration: dur(ARRIVAL_MS), easing: easeInOutCubic, essential: true } as const;
     worldHandle.reset = () => {
-      if (coords.length === 0) { map.flyTo({ center: [-63.6, 44.9], zoom: 4.5, pitch: 0, bearing: 0, padding, duration: dur(900), essential: true }); return; }
-      if (coords.length === 1) { map.flyTo({ center: coords[0], zoom: 8.5, pitch: 30, bearing: 0, padding, duration: dur(1200), curve: 1.5, essential: true }); return; }
-      const b = coords.reduce((bb, c) => bb.extend(c), new maplibregl.LngLatBounds(coords[0], coords[0]));
-      try { map.fitBounds(b, { padding, maxZoom: 9, pitch: 24, bearing: 0, duration: dur(1400), curve: 1.5, essential: true }); }
-      catch { map.flyTo({ center: b.getCenter(), zoom: 3, padding, duration: dur(1000), essential: true }); }
+      if (coords.length === 0) { map.easeTo({ center: [-63.6, 44.9], zoom: 4.5, pitch: 0, bearing: 0, padding, ...ease }); return; }
+      if (coords.length === 1) { map.easeTo({ center: coords[0], zoom: SINGLE_PIN_ZOOM, pitch: 30, bearing: 0, padding, ...ease }); return; }
+      let fitted = false;
+      try { fitted = easeToBounds(map, coords, padding, FIT_MAX_ZOOM, { pitch: 24, bearing: 0, ...ease }); } catch (err) { console.warn("[world] fit failed", err); }
+      if (!fitted) map.easeTo({ center: coords[0], zoom: 4.5, pitch: 0, bearing: 0, padding, ...ease });
     };
     worldHandle.reset();
+    // registered after the move starts: starting it fires moveend for the pending glide it interrupts
+    if (arriving && !reduce && map.isMoving()) {
+      arrivalRef.current = true;
+      map.once("moveend", () => { arrivalRef.current = false; });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, pinKey, ready, inset.left, inset.top, inset.right, inset.bottom]);
 
@@ -191,7 +233,7 @@ export default function WorldGlobe() {
       const dt = Math.min(0.1, (now - last) / 1000);
       last = now;
       const idleFor = now - lastInteractionRef.current;
-      if (idleFor > RESUME_AFTER_MS && !hoverRef.current && !map.isMoving() && document.visibilityState === "visible") {
+      if (idleFor > RESUME_AFTER_MS && !hoverRef.current && !useWorld.getState().pending && !map.isMoving() && document.visibilityState === "visible") {
         const c = map.getCenter();
         map.setCenter([c.lng - (dt / IDLE_SPIN_PERIOD_S) * 360, c.lat]);
       }
@@ -241,9 +283,16 @@ export default function WorldGlobe() {
     if (!target) return;
     const pin = pins.find((p) => p.institution.id === target);
     if (!pin || pin.institution.latitude == null || pin.institution.longitude == null) return;
-    const w = map.getContainer().clientWidth;
-    const h = map.getContainer().clientHeight;
-    map.flyTo({ center: [pin.institution.longitude, pin.institution.latitude], zoom: Math.max(map.getZoom(), 7), padding: { left: Math.round(inset.left * w), top: Math.round(inset.top * h), right: Math.round(inset.right * w), bottom: Math.round(inset.bottom * h) }, offset: [0, 120], duration: prefersReducedMotion() ? 0 : 1100, essential: true });
+    const center: [number, number] = [pin.institution.longitude, pin.institution.latitude];
+    const glide = () => {
+      const w = map.getContainer().clientWidth;
+      const h = map.getContainer().clientHeight;
+      map.flyTo({ center, zoom: Math.max(map.getZoom(), 7), padding: { left: Math.round(inset.left * w), top: Math.round(inset.top * h), right: Math.round(inset.right * w), bottom: Math.round(inset.bottom * h) }, offset: [0, 120], duration: prefersReducedMotion() ? 0 : 1100, essential: true });
+    };
+    // the guide often answers while the arrival fit is still flying: let that land first, then glide on
+    if (!arrivalRef.current) { glide(); return; }
+    map.once("moveend", glide);
+    return () => { map.off("moveend", glide); };
   }, [selectedInstitutionId, focusInstitutionIds, selectedRecordId, pins, ready, mode, inset]);
 
   const portalNodes = useMemo(() => portals.map(({ id, el, pin, order }) => createPortal(
@@ -253,7 +302,7 @@ export default function WorldGlobe() {
   )), [portals, recordsById, selectedInstitutionId, hoverId, mode, selectInstitution]);
 
   return (
-    <div className="world-root">
+    <div className="world-root" data-pending={pending}>
       <div ref={containerRef} className="world-map" role="region" aria-label={t("world.region")} />
       {mapObj && ready && <GlobeHalo map={mapObj} />}
       {portalNodes}

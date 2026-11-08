@@ -25,8 +25,10 @@ export function PinMarker({ pin, recordsById, open, hovered, mode, order = 0, on
   const shown = pin.record_ids.slice(0, 4).map((id) => recordsById.get(id)).filter((r): r is RecordCard => Boolean(r));
   const unit = mode === "idle" ? t("world.recordsIndexed") : pin.count === 1 ? t("world.holding_one") : t("world.holding_other");
   const count = fmt.number(pin.count);
+  const popDelay = mode === "idle" ? Math.min(order, 14) * 45 : 0;
   return (
     <div className="pin" data-open={open} data-hover={hovered}>
+      {mode === "results" && <span className="pin-ring" aria-hidden />}
       {open && (
         <div className="pin-card" role="group" aria-label={`${inst.name}: ${count} ${unit}`}>
           <p className="kicker text-ink-muted">{L.kind(inst.kind)} · {L.precision(inst.location_precision)}</p>
@@ -49,7 +51,7 @@ export function PinMarker({ pin, recordsById, open, hovered, mode, order = 0, on
           </div>
         </div>
       )}
-      <button type="button" className="pin-body" style={{ "--pop-delay": `${Math.min(order, 14) * 70}ms` } as React.CSSProperties} aria-expanded={open} aria-label={`${inst.name}, ${count} ${unit}, ${L.precision(inst.location_precision)}`} onClick={(e) => { e.stopPropagation(); onToggle(); }}>
+      <button type="button" className="pin-body" style={{ "--pop-delay": `${popDelay}ms` } as React.CSSProperties} aria-expanded={open} aria-label={`${inst.name}, ${count} ${unit}, ${L.precision(inst.location_precision)}`} onClick={(e) => { e.stopPropagation(); onToggle(); }}>
         <span className="pin-head" data-kind={kind} data-empty={pin.count === 0}><span className="tnum">{pin.count === 0 ? "" : pin.count > 99 ? "99+" : pin.count}</span></span>
         <span className="pin-shadow" />
       </button>

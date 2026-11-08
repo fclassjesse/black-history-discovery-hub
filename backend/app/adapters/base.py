@@ -111,7 +111,7 @@ def _ensure_loaded() -> None:
     global _LOADED
     if not _LOADED:
         from app.adapters import (  # noqa: F401
-            dal_oai, dpla, europeana, harvard_librarycloud, internet_archive, loc_json, loc_sru, ns_open_data, nypl_digital, smithsonian, tna_discovery, wikimedia_commons,
+            ckan, dal_oai, dpla, europeana, harvard_librarycloud, internet_archive, loc_json, loc_sru, ns_open_data, nypl_digital, smithsonian, tna_discovery, wikimedia_commons,
         )
 
         _LOADED = True
