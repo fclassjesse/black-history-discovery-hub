@@ -181,6 +181,25 @@
     "app": "Institution app",
     "partner": "Partner portal"
   },
+  "nova": {
+    "idle": [
+      "Hi, I'm Nova! Ask me anything about Black history.",
+      "Try asking: what happened to Africville?",
+      "Every pin on the globe is an archive that holds records.",
+      "Hover a pin and I'll tell you who it is.",
+      "Every answer I give comes with its sources.",
+      "You can also hold the mic and just talk to me."
+    ],
+    "say": {
+      "typing": "I'm listening… take your time.",
+      "listening": "Go ahead, I'm listening.",
+      "thinking": "Searching the archives",
+      "speaking": "Here's what I found.",
+      "abstain": "Hmm, I couldn't find that one. Try other words?",
+      "pin": "That pin is an archive. Click it to see what it holds.",
+      "searching": "Let's look for “{q}”…"
+    }
+  },
   "stage": {
     "title": [
       "Ask me ",

@@ -40,6 +40,8 @@ export function CharacterDock({ layout }: { layout: DockLayout }) {
       if (bubble && bubble.offsetParent === anchor.offsetParent) {
         const lift = anchor.offsetTop + anchor.offsetHeight - bubble.offsetTop - BUBBLE_OVERLAP_PX;
         el.style.setProperty("--nova-lift", `${lift}px`); // negative = the bubble sits lower: she drops to meet it
+        // her speech bubble may extend right only as far as the ask bubble does (the left column), never over the globe
+        el.style.setProperty("--nova-col-right", `${bubble.offsetLeft + bubble.offsetWidth - anchor.offsetLeft}px`);
       }
     };
 
