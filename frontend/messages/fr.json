@@ -181,6 +181,25 @@
     "app": "Application des institutions",
     "partner": "Portail des partenaires"
   },
+  "nova": {
+    "idle": [
+      "Bonjour, je suis Nova ! Posez-moi vos questions sur l'histoire des Noirs.",
+      "Essayez : que s'est-il passé à Africville ?",
+      "Chaque épingle sur le globe est un centre d'archives.",
+      "Survolez une épingle et je vous dirai de qui il s'agit.",
+      "Chacune de mes réponses cite ses sources.",
+      "Vous pouvez aussi maintenir le micro et me parler."
+    ],
+    "say": {
+      "typing": "Je vous écoute… prenez votre temps.",
+      "listening": "Allez-y, je vous écoute.",
+      "thinking": "Je cherche dans les archives",
+      "speaking": "Voici ce que j'ai trouvé.",
+      "abstain": "Hum, je n'ai rien trouvé. Essayez d'autres mots ?",
+      "pin": "Cette épingle est un centre d'archives. Cliquez pour voir ce qu'il conserve.",
+      "searching": "Cherchons « {q} »…"
+    }
+  },
   "stage": {
     "title": [
       "Demande-moi ",

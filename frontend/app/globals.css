@@ -373,33 +373,7 @@ html[data-world="on"] main, html[data-world="on"] main > div { pointer-events: n
 .character-slot .nova { position: relative; z-index: 1; height: 100%; width: 100%; overflow: visible; }
 .character-slot .nova[data-framing="bust"] { overflow: hidden; }
 .character-dock { position: absolute; z-index: 20; pointer-events: none; }
-/* Nova: the designer's painted portrait, cut into layers (scripts/build_nova_layers.py) and rigged.
-   All layers are full-canvas; the head pivot (neck) comes from that script's printout. */
-.nova-portrait { position: relative; z-index: 1; height: 100%; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
-.np-figure { transform: translate(var(--np-lean-x, 0), var(--np-lean-y, 0)); transition: transform 900ms var(--ease-out); }
-.np-breathe, .np-head, .np-head-motion { position: absolute; inset: 0; }
-.np-breathe { transform-origin: 50% 100%; animation: np-breathe 4.2s ease-in-out infinite; }
-.np-head { transform-origin: 48.175% 74.102%; transform: translateY(var(--np-head-y, 0)) rotate(var(--np-head-turn, 0deg)); transition: transform 750ms cubic-bezier(0.34, 1.3, 0.64, 1); }
-.np-head-motion { transform-origin: 48.175% 74.102%; animation: np-sway 7.5s ease-in-out infinite; }
-.np-fill { position: absolute; inset: 0; display: block; width: 100%; height: 100%; user-select: none; -webkit-user-drag: none; }
-.np-eyes { position: absolute; inset: 0; }
-.np-lids { transition: transform 70ms ease-in; }
-.nova-portrait[data-near="true"] .np-breathe, .nova-portrait[data-state="attentive"] .np-breathe { animation-duration: 2.8s; }
-.nova-portrait[data-state="listening"] .np-breathe { animation-duration: 2.2s; }
-.nova-portrait[data-state="speaking"] .np-head-motion { animation: np-nod 0.95s ease-in-out infinite; }
-.nova-portrait[data-state="thinking"] .np-head-motion { animation: np-ponder 3s ease-in-out infinite; }
-.nova-portrait[data-state="celebrate"] .np-breathe { animation: np-hop 0.65s var(--ease-out) 2; }
-.nova-portrait[data-state="celebrate"] .np-head-motion { animation: np-cheer 0.65s ease-in-out 2; }
-.nova-portrait[data-state="abstain"] .np-head-motion { animation: np-shake 0.9s ease-in-out 1; }
-.nova-portrait-think { position: absolute; z-index: 2; top: 2%; left: 74%; display: flex; gap: 6px; padding: 8px 12px; background: var(--cream); border: 2.5px solid var(--ink); border-radius: 999px; }
-.nova-portrait-think i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
-@keyframes np-breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.006); } } /* uniform scale only: never distort the painting */
-@keyframes np-sway { 0%, 100% { transform: rotate(0deg) translateX(0); } 30% { transform: rotate(0.9deg) translateX(1px); } 70% { transform: rotate(-0.8deg) translateX(-1px); } }
-@keyframes np-nod { 0%, 100% { transform: rotate(0deg) translateY(0); } 35% { transform: rotate(-0.8deg) translateY(3px); } 70% { transform: rotate(0.5deg) translateY(1px); } }
-@keyframes np-ponder { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-1.6deg) translateY(-1px); } }
-@keyframes np-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-12px); } }
-@keyframes np-cheer { 0%, 100% { transform: rotate(0deg); } 40% { transform: rotate(3deg); } }
-@keyframes np-shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-2.5deg); } 55% { transform: rotate(2deg); } 80% { transform: rotate(-1deg); } }
+/* Nova's portrait rig styles live in components/character/novaRigCss.ts (shipped with the component). */
 
 .character-dock[data-layout="guide"] { position: fixed; left: calc(var(--gutter) + 436px); bottom: 0; width: 220px; height: 190px; z-index: 30; }
 @media (min-width: 1280px) { .character-dock[data-layout="guide"] { left: calc(var(--gutter) + 516px); } }
@@ -495,7 +469,7 @@ html[data-world="on"] main, html[data-world="on"] main > div { pointer-events: n
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   .marquee-track { animation: none; }
-  .nova-body, .nova-lid, .nova-wave, .nova-puff, .nova-satchel, .np-breathe, .np-head-motion { animation: none !important; }
+  .nova-body, .nova-lid, .nova-wave, .nova-puff, .nova-satchel { animation: none !important; }
   .cursor-dot { display: none; }
 }
 

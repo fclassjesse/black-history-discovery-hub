@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { CharacterMeta, CharacterState } from "@/lib/character";
 import type { NovaFraming } from "@/components/character/Nova";
+import { NovaSpeech } from "@/components/character/NovaSpeech";
+import { NOVA_RIG_CSS } from "@/components/character/novaRigCss";
 
 /**
  * Layers cut from the designer's painting by frontend/scripts/build_nova_layers.py.
@@ -23,8 +25,9 @@ const HEAD_PIVOT = "48.175% 74.102%";
 const LID_ORIGIN = "50% 41.326%";
 
 /**
- * Structural layout is inline on purpose: if a stale or late stylesheet arrives, the layers
- * still stack on top of each other (only the motion, which lives in globals.css, is lost).
+ * Layout and pose transforms are inline, and the keyframe animations ship with the
+ * component (novaRigCss.ts): nothing about her depends on globals.css, which the owner's
+ * browser has cached stale before.
  */
 const FILL: CSSProperties = { position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" };
 /**
@@ -55,6 +58,9 @@ const HEAD_TURN_DEG = 4.5;
 /** The cursor rarely reaches the screen edge, so its pull on her eyes is amplified (then clamped to the eye's range). */
 const GAZE_GAIN = 1.8;
 const LEAN_PX = 5;
+const LEAN_TRANSITION = "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)";
+const HEAD_TRANSITION = "transform 750ms cubic-bezier(0.34, 1.3, 0.64, 1)";
+const LID_TRANSITION = "transform 70ms ease-in";
 
 const BLINK_MS = 150;
 const BLINK_MIN_MS = 2400;
@@ -162,40 +168,41 @@ export function NovaPortrait({ state, meta, gaze, framing = "full", near = false
   const pose = (typing ? TYPING_POSE : STATE_POSE[state]) ?? glance ?? follow;
 
   const headTurn = pose.x * HEAD_TURN_DEG + pose.tilt;
-  const vars = {
-    "--np-lean-x": `${pose.x * LEAN_PX}px`,
-    "--np-lean-y": `${pose.y}px`,
-    "--np-head-turn": `${headTurn}deg`,
-    "--np-head-y": "0px",
-  } as CSSProperties;
+  const figureStyle: CSSProperties = {
+    ...FIGURE,
+    ...(framing === "full" ? STAGE_DROP : {}),
+    transform: `translate(${pose.x * LEAN_PX}px, ${pose.y}px)`,
+    transition: LEAN_TRANSITION,
+  };
+  const headStyle: CSSProperties = { ...HEAD, transform: `rotate(${headTurn}deg)`, transition: HEAD_TRANSITION };
+  const irisStyle: CSSProperties = { transform: `translate(${pose.x * IRIS_X_PCT}%, ${pose.y * IRIS_Y_PCT}%)`, transition: IRIS_TRANSITION };
+  const lidStyle: CSSProperties = { transformOrigin: LID_ORIGIN, transform: `scaleY(${blink ? 1 : LID_SCALE[state] ?? 0})`, transition: LID_TRANSITION };
 
   return (
-    <div className="nova-portrait" data-state={typing ? "attentive" : state} data-framing={framing} data-near={near} data-blink={blink} style={{ ...(framing === "full" ? STAGE_ROOT : ROOT), ...vars }} aria-hidden>
-      <div className="np-figure" style={framing === "full" ? { ...FIGURE, ...STAGE_DROP } : FIGURE}>
-        <div className="np-breathe" style={FILL}>
-          <Layer src={LAYERS.body} w={CANVAS.w} h={CANVAS.h} className="np-fill" />
-          <div className="np-head" style={HEAD}>
-            <div className="np-head-motion" style={HEAD}>
-              <Layer src={LAYERS.head} w={CANVAS.w} h={CANVAS.h} className="np-fill" />
-              <div className="np-eyes" style={FILL}>
-                <Layer src={LAYERS.iris} w={CANVAS.w} h={CANVAS.h} className="np-fill np-iris" style={{ transform: `translate(${pose.x * IRIS_X_PCT}%, ${pose.y * IRIS_Y_PCT}%)`, transition: IRIS_TRANSITION }} />
-                <Layer src={LAYERS.frame} w={CANVAS.w} h={CANVAS.h} className="np-fill" />
-                <Layer src={LAYERS.lids} w={CANVAS.w} h={CANVAS.h} className="np-fill np-lids" style={{ transformOrigin: LID_ORIGIN, transform: `scaleY(${blink ? 1 : LID_SCALE[state] ?? 0})` }} />
+    <div className="nova-portrait nv-root" data-state={typing ? "attentive" : state} data-framing={framing} data-near={near} data-blink={blink} style={framing === "full" ? STAGE_ROOT : ROOT} aria-hidden>
+      {/* React 19 hoists and de-duplicates this, so every slot shares one copy */}
+      <style href="nova-rig" precedence="default">{NOVA_RIG_CSS}</style>
+      <div className="nv-figure" style={figureStyle}>
+        <div className="nv-breathe" style={FILL}>
+          <Layer src={LAYERS.body} w={CANVAS.w} h={CANVAS.h} />
+          <div className="nv-head" style={headStyle}>
+            <div className="nv-sway" style={HEAD}>
+              <Layer src={LAYERS.head} w={CANVAS.w} h={CANVAS.h} />
+              <div style={FILL}>
+                <Layer src={LAYERS.iris} w={CANVAS.w} h={CANVAS.h} style={irisStyle} />
+                <Layer src={LAYERS.frame} w={CANVAS.w} h={CANVAS.h} />
+                <Layer src={LAYERS.lids} w={CANVAS.w} h={CANVAS.h} style={lidStyle} />
               </div>
             </div>
           </div>
         </div>
-        {state === "thinking" && (
-          <span className="nova-portrait-think" aria-hidden>
-            <i className="think-dot" /><i className="think-dot" /><i className="think-dot" />
-          </span>
-        )}
       </div>
+      {framing === "full" && <NovaSpeech state={state} meta={meta} typing={typing} />}
     </div>
   );
 }
 
-function Layer({ src, w, h, className, style }: { src: string; w: number; h: number; className: string; style?: CSSProperties }) {
+function Layer({ src, w, h, style }: { src: string; w: number; h: number; style?: CSSProperties }) {
   // eslint-disable-next-line @next/next/no-img-element -- transparent painted layers, stacked and sized by CSS
-  return <img src={src} width={w} height={h} alt="" draggable={false} decoding="async" className={className} style={{ ...FILL, ...style }} />;
+  return <img src={src} width={w} height={h} alt="" draggable={false} decoding="async" style={{ ...FILL, ...style }} />;
 }
