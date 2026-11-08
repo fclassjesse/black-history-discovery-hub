@@ -28,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = getMessages(locale);
   const { t } = await getT();
   return (
-    <html lang={locale} className={`${young.variable} ${instrument.variable} ${bricolage.variable} h-full`}>
+    <html lang={locale} className={`${young.variable} ${instrument.variable} ${bricolage.variable} h-full`} data-scroll-behavior="smooth">
       <body className="grain relative min-h-full">
         <LocaleProvider locale={locale} messages={messages}>
           <a href="#main" className="skip-link">{t("common.skipToMain")}</a>

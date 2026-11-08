@@ -10,7 +10,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { PageSurface } from "@/components/layout/PageSurface";
 import { ensureGsap, prefersReducedMotion } from "@/lib/motion";
 import { character } from "@/lib/character";
-import { useHref } from "@/lib/i18n";
+import { useHref, useT } from "@/lib/i18n";
+import { prefetchSearch } from "@/lib/searchRequest";
+import { useWorld } from "@/lib/worldStore";
 
 const QUERY_KEYS = ["q", "mode", "types", "access", "institution", "lang", "verification", "rights", "date_from", "date_to", "identifier", "location", "source"];
 
@@ -31,6 +33,7 @@ export function goTo(url: string) {
 export function Explorer() {
   const sp = useSearchParams();
   const href = useHref();
+  const { locale } = useT();
   const active = isExploring(new URLSearchParams(sp.toString()));
   const rootRef = useRef<HTMLDivElement>(null);
   const busy = useRef(false);
@@ -42,13 +45,15 @@ export function Explorer() {
     if (busy.current) return;
     const url = href(`/?q=${encodeURIComponent(question)}&guide=1&input=${input}`);
     character.set("pointing", { text: question });
+    useWorld.getState().setPending(true); // the world leans in now, not when the results land
+    prefetchSearch(url, locale); // the request runs during the exit animation; the results view joins it
     if (prefersReducedMotion() || !rootRef.current) { goTo(url); return; }
     busy.current = true;
     const gsap = ensureGsap();
     gsap.timeline({ onComplete: () => { busy.current = false; goTo(url); } })
-      .to("[data-stage-bubble]", { scale: 0.9, y: -24, opacity: 0, duration: 0.5, ease: "power2.in" }, 0)
-      .to("[data-stage-fade], [data-stage-sections]", { opacity: 0, duration: 0.35 }, 0);
-  }, [href]);
+      .to("[data-stage-bubble]", { scale: 0.92, y: -18, opacity: 0, duration: 0.34, ease: "power2.in" }, 0)
+      .to("[data-stage-fade], [data-stage-sections]", { opacity: 0, duration: 0.3 }, 0);
+  }, [href, locale]);
 
   return (
     <div ref={rootRef} className="relative">

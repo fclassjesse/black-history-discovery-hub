@@ -189,7 +189,6 @@
       "is ",
       "held."
     ],
-    "tag": "{name} · BCCNS discovery prototype · cited every time",
     "formAria": "Ask the guide or search",
     "inputLabel": "Ask about a person, place, community, subject or date",
     "placeholder": "what happened to Africville?",
@@ -201,7 +200,7 @@
       "Black Loyalists in Birchtown",
       "Viola Desmond"
     ],
-    "advanced": "Advanced"
+    "advanced": "Advanced search"
   },
   "world": {
     "controls": "Map controls",
@@ -266,10 +265,9 @@
     "labelAsk": "Ask the guide or search",
     "placeholder": "Ask about a person, place, community…",
     "ask": "Ask →",
-    "startOver": "← Start over",
     "advancedBadge": "advanced · no AI",
     "edit": "Edit",
-    "advanced": "Advanced",
+    "advanced": "Advanced search",
     "also": "Also:",
     "failed": "Search failed: {error}. Is the API running on port 8000?",
     "searching": "Searching…",

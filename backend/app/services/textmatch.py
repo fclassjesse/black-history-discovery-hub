@@ -27,3 +27,18 @@ def text_matches(text: str, query: str) -> bool:
         return False
     folded = ascii_fold(text).lower()
     return all(term_pattern(t).search(folded) for t in terms)
+
+
+# Government data portals (CKAN, Socrata) rank by loose full-text match, so "Black Nova Scotians" also returns
+# payday-lender licences, black carbon and the Scotian Shelf. A dataset from those portals must also name Black
+# people or communities in its own title, tags or (short) description before it is stored.
+TOPIC_GATE = re.compile(
+    r"\b(black (canadian|communit|people|person|individual|youth|wom[ae]n|m[ae]n|famil|nova scotian|histor|loyalist|refugee|justice|social|business|entrepreneur|student|heritage|culture|settle)"
+    r"|african[- ](canadian|nova scotian|descent|heritage)|people of african descent|anti-black|africville|book of negroes"
+    r"|construction battalion|underground railroad|slavery|enslave)",
+    re.I,
+)
+
+
+def on_black_history_topic(text: str) -> bool:
+    return bool(TOPIC_GATE.search(text or ""))

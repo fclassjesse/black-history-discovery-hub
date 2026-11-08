@@ -45,7 +45,7 @@ export function GlobeHalo({ map }: { map: MLMap }) {
   const planeFrontRef = useRef<SVGGElement>(null);
   const planeBackRef = useRef<SVGGElement>(null);
   const geomRef = useRef({ gx: 0, gy: 0, r: 0, show: false });
-  const { mode, projection } = useWorld();
+  const { mode, projection, pending } = useWorld();
 
   // measure the sphere and place everything
   useEffect(() => {
@@ -57,7 +57,9 @@ export function GlobeHalo({ map }: { map: MLMap }) {
       raf = 0;
       const w = map.getContainer().clientWidth;
       const h = map.getContainer().clientHeight;
-      const usable = projection === "globe" && mode === "idle" && Math.abs(map.getPitch()) < 1 && Math.abs(map.getBearing()) < 1;
+      // hidden as soon as a question is asked: its blurred drop shadow and clouds would be re-rasterised on every frame
+      // of the zoom, which costs frames exactly when the camera move must stay smooth
+      const usable = projection === "globe" && mode === "idle" && !pending && Math.abs(map.getPitch()) < 1 && Math.abs(map.getBearing()) < 1;
       const hide = () => { front.dataset.show = "false"; back.dataset.show = "false"; geomRef.current.show = false; };
       if (!usable) { hide(); return; }
       const c = map.getCenter();
@@ -86,7 +88,7 @@ export function GlobeHalo({ map }: { map: MLMap }) {
     map.on("resize", schedule);
     map.on("idle", schedule);
     return () => { map.off("move", schedule); map.off("resize", schedule); map.off("idle", schedule); if (raf) cancelAnimationFrame(raf); };
-  }, [map, mode, projection]);
+  }, [map, mode, projection, pending]);
 
   // fly the paper plane round the orbit: in front on the near half, behind the sphere on the far half
   useEffect(() => {

@@ -13,7 +13,7 @@ export function OnlinePanel({ records, docked = true }: { records: RecordCard[];
   if (records.length === 0) return null;
   const id = docked ? "online-heading" : "online-heading-stacked";
   return (
-    <aside aria-labelledby={id} className={`online-panel ${docked ? "w-[min(360px,calc(100vw-2*var(--gutter)))]" : ""}`}>
+    <aside aria-labelledby={id} className={`online-panel ${docked ? "rise-in w-[min(360px,calc(100vw-2*var(--gutter)))]" : ""}`}>
       <div className="flex items-start justify-between gap-3 p-4 pb-2">
         <div>
           <p className="kicker text-cream/70">{t("online.kicker")}</p>

@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { character, type CharacterMeta, type CharacterRig, type CharacterState } from "@/lib/character";
-import { Nova, type NovaFraming } from "@/components/character/Nova";
+import { type NovaFraming } from "@/components/character/Nova";
+import { NovaPortrait } from "@/components/character/NovaPortrait";
 
 type SlotSize = "hero" | "guide" | "mini";
 
@@ -18,8 +19,8 @@ const SACCADE_MIN_MS = 1800;
 const SACCADE_JITTER_MS = 2600;
 
 /**
- * The stage where the guide lives. Nova (components/character/Nova.tsx) is the
- * default rig; an external rig registered through lib/character.ts replaces her.
+ * The stage where the guide lives. Nova's painted portrait
+ * (components/character/NovaPortrait.tsx) is the default rig; an external rig registered through lib/character.ts replaces her.
  * On the stage she is shown head to toe; the small docks (results drawer, app
  * header) frame her as a bust rising from the bottom edge.
  */
@@ -105,7 +106,7 @@ export function CharacterSlot({ size = "hero", framing: framingProp, className =
   return (
     <div className={`character-slot h-full w-full ${className}`} data-character-slot data-character-state={state} data-size={size} data-framing={framing} data-near={near} aria-hidden>
       <div ref={mountRef} className="absolute inset-0" data-character-mount />
-      {!rig && <Nova state={state} meta={meta} gaze={gaze} framing={framing} near={near} />}
+      {!rig && <NovaPortrait state={state} meta={meta} gaze={gaze} framing={framing} near={near} />}
     </div>
   );
 }
