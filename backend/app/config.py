@@ -5,7 +5,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
@@ -60,11 +60,38 @@ class Settings(BaseSettings):
     jwt_expire_minutes: int = 60 * 12
     cookie_secure: bool = False
 
+    # --- Public deployment guards -----------------------------------------
+    # AI-written answers per UTC day (0 = unlimited); over the cap Nova still shows the matching records.
+    guide_daily_limit: int = 300
+    guide_daily_limit_per_visitor: int = 30
+    trust_proxy_headers: bool = True  # the API sits behind the Next.js proxy, which sets X-Forwarded-For
+    search_log_retention_days: int = 30  # search/guide questions are deleted after this many days (0 = keep)
+
     # --- Files / jobs ----------------------------------------------------
     upload_dir: Path = BACKEND_ROOT / "uploads"
     jobs_inline: bool = True
     cors_origins: str = "http://localhost:3000"
     public_base_url: str = "http://localhost:3000"
+
+    @property
+    def is_production(self) -> bool:
+        return self.app_env.strip().lower() == "production"
+
+    @model_validator(mode="after")
+    def _production_guards(self) -> "Settings":
+        """Refuse to start a public deployment with the development secrets."""
+        if not self.is_production:
+            return self
+        problems = []
+        if self.jwt_secret in ("", "dev-only-change-me") or len(self.jwt_secret) < 32:
+            problems.append("JWT_SECRET must be a random value of at least 32 characters (python -c 'import secrets; print(secrets.token_urlsafe(48))')")
+        if not self.cookie_secure:
+            problems.append("COOKIE_SECURE must be true (the site is served over HTTPS)")
+        if "localhost" in self.cors_origins or "localhost" in self.public_base_url:
+            problems.append("CORS_ORIGINS and PUBLIC_BASE_URL must be the public https address, not localhost")
+        if problems:
+            raise ValueError("Unsafe production settings:\n- " + "\n- ".join(problems))
+        return self
 
     @property
     def async_database_url(self) -> str:

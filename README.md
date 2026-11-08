@@ -45,7 +45,7 @@ make worker   # optional: background job worker; by default JOBS_INLINE=true run
 
 Open <http://localhost:3000> (public site: Nova the guide + the globe, one page) and <http://localhost:3000/app> (institution app, sign in with a partner login).
 
-**Partner logins** (seeded; password `hub-demo-2026` unless `SEED_PASSWORD` is set):
+**Partner logins** (seeded; password `hub-demo-2026` unless `SEED_PASSWORD` is set — **local development only**: with `APP_ENV=production` the seed refuses this published password and skips the quick `test@test.com` login; see `docs/DEPLOY.md`):
 
 | Institution | owner | editor | reviewer |
 |---|---|---|---|
@@ -55,7 +55,7 @@ Open <http://localhost:3000> (public site: Nova the guide + the globe, one page)
 ## Tests and checks
 
 ```bash
-cd backend && uv run pytest          # 69 tests: bilingual search/guide, citation validation, publish confirmation, tenant isolation, adapter fixtures (incl. Dalhousie OAI-PMH), CSV preview, search
+cd backend && uv run pytest          # 80 tests: bilingual search/guide, citation validation, publish confirmation, tenant isolation, adapter fixtures (incl. Dalhousie OAI-PMH), CSV preview, search, public-deployment guards
 cd frontend && npx tsc --noEmit && npm run build
 ```
 
@@ -76,7 +76,12 @@ Tests use the `bhdh_test` database on the embedded server (started by `make db`)
 | `DPLA_API_KEY` | — | free: `curl -X POST https://api.dp.la/v2/api_key/<your-email>` (key arrives by email) |
 | `EUROPEANA_API_KEY` | — | free: <https://www.europeana.eu/en/how-to-register-for-and-manage-an-api-key> |
 | `HTTP_USER_AGENT`, `HTTP_CACHE_TTL_SECONDS` | honest UA, 7 days | outbound etiquette |
+| `APP_ENV` | `development` | `production` turns on the startup guards: the API refuses to start with the dev `JWT_SECRET` (or one under 32 chars), `COOKIE_SECURE=false`, or localhost `CORS_ORIGINS`/`PUBLIC_BASE_URL` |
 | `JWT_SECRET`, `JWT_EXPIRE_MINUTES`, `COOKIE_SECURE` | dev values | **change `JWT_SECRET`** beyond local demos |
+| `GUIDE_DAILY_LIMIT`, `GUIDE_DAILY_LIMIT_PER_VISITOR` | `300`, `30` | AI-written answers per UTC day (0 = unlimited). Over the cap Nova says so and still lists the matching records. Visitors are counted by a salted IP hash held in memory only |
+| `TRUST_PROXY_HEADERS` | `true` | read the visitor IP from `X-Forwarded-For` (the API sits behind the Next.js proxy) |
+| `SEARCH_LOG_RETENTION_DAYS` | `30` | logged questions are deleted after this many days (0 = keep) |
+| `NEXT_PUBLIC_PRIVACY_CONTACT` (frontend) | — | email shown on `/privacy` for questions and removal requests |
 | `JOBS_INLINE` | `true` | `false` → run `make worker` |
 | `UPLOAD_DIR`, `CORS_ORIGINS`, `SEED_PASSWORD`, `SEED_MAX_PER_QUERY` | see `.env.example` | |
 | `API_URL` (frontend) | `http://127.0.0.1:8000` | where Next.js proxies `/api/*` |
@@ -137,11 +142,12 @@ results list beside the globe for keyboard and screen-reader users.
 - **No PostGIS**: institutions store lat/lon + a precision label; fine at this scale.
 - **Auth is FastAPI-native** (argon2 + JWT cookie) rather than Supabase Auth/RLS; tenant checks are enforced server-side on every partner endpoint and covered by tests.
 - **Voice** uses the browser Web Speech API (push-to-talk, editable transcript). Server transcription needs `OPENAI_API_KEY`; live duplex voice is out of scope.
-- **Uploaded files** (PDF finding aids, shelf photos) are served from `backend/uploads` by the API without access control — fine for a local demo, not for production.
+- **Uploaded files** (PDF finding aids, shelf photos) are served by `app/routers/files.py`: a file that a **published** record points to (a finding-aid PDF) is public; everything else is visible only to signed-in members of the uploading institution (others get 404).
 - **Search candidate cap**: natural-language search keeps lexical hits plus semantic hits under a cosine-distance floor, ranked and capped at 300 (the UI then says "300+ · showing the 300 most relevant"); browse mode reports the true count but pages through the 300 most recent.
-- **Uploaded files** under `/api/files/*` are public (see above); partner-verified holdings can also be declared in manual entry, but only with an explicit confirmation checkbox that is written to the audit trail.
+- Partner-verified holdings can also be declared in manual entry, but only with an explicit confirmation checkbox that is written to the audit trail.
 - The **Demo Partner** is fictional. Its records are real Open Library bibliographic entries but its *holdings* are sample data (`holding_verification=demo`, dashed pin). BCCNS has logins and no holdings until staff add them.
-- The guide character, motion and final illustrations are the designer's; the placeholder is intentionally neutral.
+- **Nova** is the designer's painted portrait (`png-girl1.png`), cut into animation layers by `frontend/scripts/build_nova_layers.py` without repainting; the rig lives in `frontend/components/character/` (portrait, speech bubble, styles).
+- **Privacy**: `/privacy` (EN/FR) explains what is kept: question text (no IP, no ID, deleted after 30 days), what goes to Anthropic, browser voice recognition, map tiles. No visitor accounts or analytics; the only visitor cookie remembers the language. Failed partner sign-ins are throttled (10 per 15 min).
 
 ## Search, entities and the guide (2026-11-07 optimization)
 

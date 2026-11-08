@@ -35,6 +35,7 @@ export function SiteFooter({ tone = "flame" }: { tone?: "flame" | "chalk" }) {
               <Link href="/about/sources" className="underline">{t("footer.sources")}</Link>
               <Link href="/app" className="underline">{t("footer.app")}</Link>
               <Link href="/partner" className="underline">{t("footer.partner")}</Link>
+              <Link href="/privacy" className="underline">{t("footer.privacy")}</Link>
               <a href="/api-docs" className="underline">{t("common.apiDocs")}</a>
             </div>
           </div>

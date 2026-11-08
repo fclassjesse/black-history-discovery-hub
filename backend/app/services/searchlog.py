@@ -7,6 +7,7 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import get_settings
 from app.db import session_factory
 from app.models import SearchLog
 
@@ -22,6 +23,18 @@ async def log_search(*, kind: str, query: str, mode: str | None, filters: dict[s
             await s.commit()
     except Exception:  # noqa: BLE001
         pass
+
+
+async def prune_old() -> int:
+    """Deletes logged questions older than SEARCH_LOG_RETENTION_DAYS (privacy: visitors may type personal details)."""
+    days = get_settings().search_log_retention_days
+    if days <= 0:
+        return 0
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    async with session_factory()() as s:
+        res = await s.execute(text("DELETE FROM search_log WHERE created_at < :cutoff"), {"cutoff": cutoff})
+        await s.commit()
+        return res.rowcount or 0
 
 
 async def gaps_summary(session: AsyncSession, days: int = 7) -> dict[str, Any]:

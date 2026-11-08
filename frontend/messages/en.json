@@ -15,7 +15,8 @@
     "appUpload": "Upload",
     "institutionApp": "Institution app",
     "record": "Record",
-    "institution": "Institution"
+    "institution": "Institution",
+    "privacy": "Privacy"
   },
   "common": {
     "skipToMain": "Skip to main content",
@@ -179,7 +180,8 @@
     "institutions": "Institutions",
     "sources": "Sources",
     "app": "Institution app",
-    "partner": "Partner portal"
+    "partner": "Partner portal",
+    "privacy": "Privacy"
   },
   "nova": {
     "idle": [
@@ -958,5 +960,41 @@
         "created": "Draft “{title}” created. Publish it from Review."
       }
     }
+  },
+  "privacy": {
+    "eyebrow": "Privacy ",
+    "accent": "· in plain words",
+    "title": "What we keep, and what we don't.",
+    "lede": "You can use this site without an account. We don't track you or show ads. The only cookie for visitors remembers your language (English or French).",
+    "sections": [
+      {
+        "h": "Your questions",
+        "p": "When you ask Nova a question, the text is sent to Anthropic (the company behind Claude) so it can write an answer from the records we found. We also keep the question text, the number of results and the time it took, to improve search. We don't store your name, IP address or any ID with it, and we delete these questions automatically after 30 days. Please don't type personal details you wouldn't want stored."
+      },
+      {
+        "h": "Voice",
+        "p": "\"Hold to talk\" uses your browser's built-in speech recognition. In Chrome and Edge, your voice is sent to Google or Microsoft to be turned into text; this site never receives the audio. You can always type instead."
+      },
+      {
+        "h": "The map",
+        "p": "Map images come from OpenFreeMap. Like any website you load images from, it sees your IP address. Fonts are served by this site, not by Google."
+      },
+      {
+        "h": "Fair use limit",
+        "p": "To keep costs in check, there is a daily limit on written answers. To count it we keep a scrambled version of your IP address in memory only; it is never saved and is reset every day."
+      },
+      {
+        "h": "The records",
+        "p": "Records come from public catalogues of museums, archives and libraries, and from partner institutions that choose to publish them. We link you to the institution that holds each item. If a record should not be shown, contact us and we'll remove it from this site and tell the holding institution."
+      },
+      {
+        "h": "Partner staff",
+        "p": "Staff of partner institutions sign in with an email and password (stored encrypted). Files they upload are visible only to their institution, unless they publish them. Sign-ins use one secure cookie."
+      }
+    ],
+    "contactTitle": "Contact",
+    "contact": "Questions or removal requests: {email}",
+    "contactFallback": "Questions or removal requests: contact the Black Cultural Centre for Nova Scotia.",
+    "updated": "Last updated {date}."
   }
 }

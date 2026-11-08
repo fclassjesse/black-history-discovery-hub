@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +9,7 @@ from sqlalchemy.orm import selectinload
 from app.db import get_session
 from app.models import Membership, User
 from app.security import clear_session_cookie, current_user, issue_token, set_session_cookie, verify_password
+from app.services.quota import client_ip, login_throttle
 
 router = APIRouter(prefix="/api/partner/auth", tags=["partner-auth"])
 
@@ -31,10 +32,15 @@ async def _memberships(session: AsyncSession, user: User) -> list[Membership]:
 
 
 @router.post("/login")
-async def login(body: LoginIn, response: Response, session: AsyncSession = Depends(get_session)) -> dict:
+async def login(body: LoginIn, request: Request, response: Response, session: AsyncSession = Depends(get_session)) -> dict:
+    ip = client_ip(request)
+    if login_throttle.blocked(ip, body.email):
+        raise HTTPException(429, "Too many failed sign-in attempts. Try again in 15 minutes.")
     user = (await session.execute(select(User).where(User.email == body.email.lower()))).scalar_one_or_none()
     if user is None or not user.is_active or not verify_password(body.password, user.password_hash):
+        login_throttle.fail(ip, body.email)
         raise HTTPException(401, "Invalid email or password")
+    login_throttle.success(ip, body.email)
     set_session_cookie(response, issue_token(user.id))
     return _me(user, await _memberships(session, user))
 

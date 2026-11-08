@@ -16,6 +16,7 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
+from app.services.quota import answer_quota
 from app.services import search as search_svc
 from app.services import i18n
 from app.services.cards import load_records, record_card
@@ -342,7 +343,8 @@ def cache_clear() -> None:
 
 
 async def ask(
-    session: AsyncSession, question: str, filters: "search_svc.SearchFilters | None" = None, history: list[dict[str, Any]] | None = None, locale: str = "en"
+    session: AsyncSession, question: str, filters: "search_svc.SearchFilters | None" = None, history: list[dict[str, Any]] | None = None, locale: str = "en",
+    visitor: str | None = None,
 ) -> dict[str, Any]:
     """``locale`` is the UI language (en|fr): the fallback answer language and the language of generated messages."""
     locale = i18n.norm_locale(locale)
@@ -356,7 +358,7 @@ async def ask(
         out = dict(hit[1], cached=True)
         await log_search(kind="guide", query=question, mode="cached", filters=filters.__dict__, result_count=len(out.get("records", [])), took_ms=int((time.monotonic() - t0) * 1000), abstained=out.get("abstain"))
         return out
-    out = await _ask_uncached(session, question, filters, history, locale)
+    out = await _ask_uncached(session, question, filters, history, locale, visitor)
     out["cached"] = False
     if ttl > 0:
         _CACHE[key] = (time.monotonic(), out)
@@ -366,7 +368,9 @@ async def ask(
     return out
 
 
-async def _ask_uncached(session: AsyncSession, question: str, filters: "search_svc.SearchFilters", history: list[dict[str, Any]], locale: str = "en") -> dict[str, Any]:
+async def _ask_uncached(
+    session: AsyncSession, question: str, filters: "search_svc.SearchFilters", history: list[dict[str, Any]], locale: str = "en", visitor: str | None = None
+) -> dict[str, Any]:
     info = provider_info()
     pack, cards, follow_up = await build_pack(session, question, filters, history, locale)
     if not pack.items:
@@ -375,6 +379,11 @@ async def _ask_uncached(session: AsyncSession, question: str, filters: "search_s
         llm = get_llm()
     except LLMNotConfigured as e:
         return _finish(pack, {"answer": "", "abstain": True, "abstain_reason": i18n.t(locale, "guide.not_configured", error=str(e))}, cards, info, follow_up=follow_up)
+    # daily cap on paid AI answers: over it, the visitor still gets the matching records (counted only when the model would be called)
+    if not answer_quota.try_take(visitor):
+        out = _finish(pack, {"answer": "", "abstain": True, "abstain_reason": i18n.t(locale, "guide.daily_limit")}, cards, info, follow_up=follow_up)
+        out["daily_limit_reached"] = True
+        return out
 
     context = ""
     if history:
