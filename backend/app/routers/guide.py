@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
 from app.services import guide
+from app.services.quota import answer_quota, client_ip
 from app.services.search import SearchFilters
 
 router = APIRouter(prefix="/api/guide", tags=["guide"])
@@ -26,9 +27,10 @@ class AskIn(BaseModel):
 
 
 @router.post("/ask")
-async def ask(body: AskIn, session: AsyncSession = Depends(get_session)) -> dict:
+async def ask(body: AskIn, request: Request, session: AsyncSession = Depends(get_session)) -> dict:
     filters = SearchFilters.from_params(body.filters)
-    out = await guide.ask(session, body.question.strip(), filters=filters, history=[t.model_dump() for t in body.history], locale=body.locale)
+    visitor = answer_quota.visitor_key(client_ip(request))
+    out = await guide.ask(session, body.question.strip(), filters=filters, history=[t.model_dump() for t in body.history], locale=body.locale, visitor=visitor)
     out["question"] = body.question.strip()
     out["input_mode"] = body.input_mode
     out["locale"] = body.locale

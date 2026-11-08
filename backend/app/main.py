@@ -6,10 +6,10 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
-from app.routers import guide, institutions, partner, partner_auth, records, search, status, voice
+from app.routers import files, guide, institutions, partner, partner_auth, records, search, status, voice
+from app.services import searchlog
 from app.services.http import get_http
 
 
@@ -33,13 +33,30 @@ async def _warm_models() -> None:
         logger.warning("model warm-up failed; models will load on first request", exc_info=True)
 
 
+PRUNE_EVERY_SECONDS = 24 * 3600
+
+
+async def _prune_search_log_daily() -> None:
+    """Search-log retention: on startup, then once a day."""
+    while True:
+        try:
+            removed = await searchlog.prune_old()
+            if removed:
+                logger.info("search_log retention: deleted %d old rows", removed)
+        except Exception:  # noqa: BLE001 — retry tomorrow; never take the API down over housekeeping
+            logger.warning("search_log retention failed", exc_info=True)
+        await asyncio.sleep(PRUNE_EVERY_SECONDS)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     s = get_settings()
     s.upload_dir.mkdir(parents=True, exist_ok=True)
     warm = asyncio.create_task(_warm_models())  # in the background: startup is not delayed
+    prune = asyncio.create_task(_prune_search_log_daily())
     yield
     warm.cancel()
+    prune.cancel()
     await get_http().aclose()
 
 
@@ -56,8 +73,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-for r in (status.router, search.router, records.router, institutions.router, guide.router, voice.router, partner_auth.router, partner.router):
+for r in (files.router, status.router, search.router, records.router, institutions.router, guide.router, voice.router, partner_auth.router, partner.router):
     app.include_router(r)
 
-get_settings().upload_dir.mkdir(parents=True, exist_ok=True)
-app.mount("/api/files", StaticFiles(directory=str(get_settings().upload_dir)), name="files")
+# uploaded files are served by routers/files.py with an access check (published finding aids public, the rest members-only)

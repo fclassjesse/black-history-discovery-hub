@@ -65,6 +65,7 @@ export function SiteHeader() {
         <div className="mx-auto flex w-full max-w-[1600px] flex-wrap gap-x-6 gap-y-1 px-[var(--gutter)] pb-6 text-sm text-ink-muted">
           <span>{t("header.built")}</span>
           <a href="/api-docs" className="underline" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>{t("header.partnerApi")}</a>
+          <Link href="/privacy" className="underline" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>{t("footer.privacy")}</Link>
         </div>
       </div>
     </>

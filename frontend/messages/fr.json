@@ -15,7 +15,8 @@
     "appUpload": "Téléverser",
     "institutionApp": "Application des institutions",
     "record": "Notice",
-    "institution": "Institution"
+    "institution": "Institution",
+    "privacy": "Confidentialité"
   },
   "common": {
     "skipToMain": "Aller au contenu principal",
@@ -179,7 +180,8 @@
     "institutions": "Institutions",
     "sources": "Sources",
     "app": "Application des institutions",
-    "partner": "Portail des partenaires"
+    "partner": "Portail des partenaires",
+    "privacy": "Confidentialité"
   },
   "nova": {
     "idle": [
@@ -958,5 +960,41 @@
         "created": "Brouillon « {title} » créé. Publiez-le depuis Révision."
       }
     }
+  },
+  "privacy": {
+    "eyebrow": "Confidentialité ",
+    "accent": "· en termes simples",
+    "title": "Ce que nous gardons, et ce que nous ne gardons pas.",
+    "lede": "Vous pouvez utiliser ce site sans compte. Nous ne vous suivons pas et n'affichons pas de publicité. Le seul témoin (cookie) pour les visiteurs retient votre langue (français ou anglais).",
+    "sections": [
+      {
+        "h": "Vos questions",
+        "p": "Quand vous posez une question à Nova, le texte est envoyé à Anthropic (l'entreprise derrière Claude) pour rédiger une réponse à partir des notices trouvées. Nous gardons aussi le texte de la question, le nombre de résultats et le temps de réponse, pour améliorer la recherche. Nous n'y associons ni votre nom, ni votre adresse IP, ni aucun identifiant, et ces questions sont supprimées automatiquement après 30 jours. Évitez d'y écrire des renseignements personnels."
+      },
+      {
+        "h": "La voix",
+        "p": "« Maintenir pour parler » utilise la reconnaissance vocale intégrée à votre navigateur. Dans Chrome et Edge, votre voix est envoyée à Google ou Microsoft pour être transcrite; ce site ne reçoit jamais l'audio. Vous pouvez toujours écrire à la place."
+      },
+      {
+        "h": "La carte",
+        "p": "Les images de la carte proviennent d'OpenFreeMap. Comme tout site dont on charge des images, il voit votre adresse IP. Les polices sont servies par ce site, pas par Google."
+      },
+      {
+        "h": "Limite d'utilisation",
+        "p": "Pour contenir les coûts, le nombre de réponses rédigées par jour est limité. Pour le compter, nous gardons une version brouillée de votre adresse IP en mémoire seulement; elle n'est jamais enregistrée et est remise à zéro chaque jour."
+      },
+      {
+        "h": "Les notices",
+        "p": "Les notices proviennent des catalogues publics de musées, d'archives et de bibliothèques, et d'institutions partenaires qui choisissent de les publier. Nous vous renvoyons à l'institution qui conserve chaque document. Si une notice ne devrait pas être affichée, écrivez-nous : nous la retirerons de ce site et en informerons l'institution."
+      },
+      {
+        "h": "Personnel des partenaires",
+        "p": "Le personnel des institutions partenaires se connecte avec un courriel et un mot de passe (stocké chiffré). Les fichiers téléversés ne sont visibles que par leur institution, sauf s'ils sont publiés. La connexion utilise un seul témoin sécurisé."
+      }
+    ],
+    "contactTitle": "Contact",
+    "contact": "Questions ou demandes de retrait : {email}",
+    "contactFallback": "Questions ou demandes de retrait : communiquez avec le Black Cultural Centre for Nova Scotia.",
+    "updated": "Dernière mise à jour : {date}."
   }
 }

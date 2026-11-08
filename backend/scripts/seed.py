@@ -22,7 +22,7 @@ from sqlalchemy import select
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.adapters.base import all_adapters  # noqa: E402
-from app.config import BACKEND_ROOT  # noqa: E402
+from app.config import BACKEND_ROOT, get_settings  # noqa: E402
 from app.db import session_factory  # noqa: E402
 from app.models import ConnectorRun, Institution, Membership, Record, User  # noqa: E402
 from app.security import hash_password  # noqa: E402
@@ -31,7 +31,9 @@ from app.services.http import BlockedError  # noqa: E402
 from app.services.repository import upsert_record  # noqa: E402
 
 FIXTURES = BACKEND_ROOT / "fixtures"
-DEMO_PASSWORD = os.environ.get("SEED_PASSWORD", "hub-demo-2026")
+DEFAULT_DEMO_PASSWORD = "hub-demo-2026"
+DEMO_PASSWORD = os.environ.get("SEED_PASSWORD", DEFAULT_DEMO_PASSWORD)
+MIN_PROD_PASSWORD = 14
 SEED_USERS = [
     ("bccns", "owner@bccns.example", "BCCNS Owner", "owner"),
     ("bccns", "editor@bccns.example", "BCCNS Editor", "editor"),
@@ -40,6 +42,8 @@ SEED_USERS = [
     ("demo-partner", "editor@demo-partner.example", "Demo Partner Editor", "editor"),
     ("demo-partner", "reviewer@demo-partner.example", "Demo Partner Reviewer", "reviewer"),
 ]
+# Easy login for live demos (owner of the demo partner). Local/demo data only — never seed this in production.
+DEMO_QUICK_LOGIN = ("demo-partner", os.environ.get("DEMO_QUICK_EMAIL", "test@test.com"), "Demo Tester", "owner", os.environ.get("DEMO_QUICK_PASSWORD", "12345678"))
 IA_FULL_TEXT_ITEMS_MAX = 12
 
 
@@ -71,11 +75,14 @@ async def seed_institutions(session) -> None:
 
 
 async def seed_users(session) -> None:
-    for slug, email, name, role in SEED_USERS:
+    users = [(*u, DEMO_PASSWORD) for u in SEED_USERS]
+    if not get_settings().is_production:
+        users.append(DEMO_QUICK_LOGIN)  # the easy test@test.com login exists only on local/demo machines
+    for slug, email, name, role, password in users:
         inst = (await session.execute(select(Institution).where(Institution.slug == slug))).scalar_one()
         user = (await session.execute(select(User).where(User.email == email))).scalar_one_or_none()
         if user is None:
-            user = User(email=email, display_name=name, password_hash=hash_password(DEMO_PASSWORD))
+            user = User(email=email, display_name=name, password_hash=hash_password(password))
             session.add(user)
             await session.flush()
         m = (await session.execute(select(Membership).where(Membership.user_id == user.id, Membership.institution_id == inst.id))).scalar_one_or_none()
@@ -163,6 +170,9 @@ async def main() -> None:
     ap.add_argument("--no-live", action="store_true")
     ap.add_argument("--max", type=int, default=int(os.environ.get("SEED_MAX_PER_QUERY", "40")))
     args = ap.parse_args()
+    if get_settings().is_production and (DEMO_PASSWORD == DEFAULT_DEMO_PASSWORD or len(DEMO_PASSWORD) < MIN_PROD_PASSWORD):
+        sys.exit(f"[seed] refusing to seed production: set SEED_PASSWORD to a private password of at least {MIN_PROD_PASSWORD} characters "
+                 f"(the default {DEFAULT_DEMO_PASSWORD!r} is published in the public README)")
     async with session_factory()() as session:
         print("[seed] institutions")
         await seed_institutions(session)
@@ -179,7 +189,8 @@ async def main() -> None:
     print(f"  {'source':<18}{'status':<14}{'new recs':>8}{'chunks':>8}  detail")
     for s in summary:
         print(f"  {s['source']:<18}{s['status']:<14}{s['records']:>8}{s['chunks']:>8}  {s['detail'][:70]}")
-    print("\nPartner logins (password for all: %s)" % DEMO_PASSWORD)
+    print(f"\nQuick demo login: {DEMO_QUICK_LOGIN[1]} / {DEMO_QUICK_LOGIN[4]}")
+    print("Partner logins (password for all: %s)" % ("<SEED_PASSWORD from the environment>" if get_settings().is_production else DEMO_PASSWORD))
     for slug, email, _, role in SEED_USERS:
         print(f"  {slug:<14}{role:<10}{email}")
 
