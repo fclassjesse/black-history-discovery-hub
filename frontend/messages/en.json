@@ -298,6 +298,7 @@
     "filters": "Filters",
     "top": "top {n} · ",
     "holdersPinned": "holders pinned",
+    "localFirst": "Showing {region} first, since you're there.",
     "onlineOnly": "online only",
     "noLocation": "no location",
     "noMatch": "No records match. Try fewer filters or another spelling. See the",

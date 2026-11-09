@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import get_settings
 from app.services.quota import answer_quota
 from app.services import search as search_svc
-from app.services import i18n
+from app.services import i18n, locality
 from app.services.cards import load_records, record_card
 from app.services.llm import LLMNotConfigured, get_llm, provider_info
 from app.services import aliases
@@ -259,6 +259,8 @@ async def build_pack(
 ) -> tuple[EvidencePack, list[dict[str, Any]], bool]:
     filters = filters or search_svc.SearchFilters()
     query, follow_up = retrieval_query(question, history)
+    # "I'm a student at Saint Mary's ..." → retrieve on the topic only, then put Nova Scotia evidence first
+    region, query = locality.detect(query)
     ids = await search_svc.search_ids(session, query, filters, mode="natural", limit=CANDIDATE_RECORDS)
     # a follow-up keeps the records the previous answer cited, so "where is it held?" can resolve "it"
     if follow_up:
@@ -272,6 +274,8 @@ async def build_pack(
     records = await load_records(session, ids)
     rq = rerank_query(question, query)
     records = await rerank_items(rq, records, lambda r: f"{r.title}. {'; '.join(r.subjects[:6])}. {(r.description or '')[:400]}")
+    if region:
+        records = locality.promote(records, await locality.local_tiers(session, [r.id for r in records[: locality.GUIDE_WINDOW]], region), locality.GUIDE_WINDOW)
     records = _collapse_same_work(records, RECORD_K)
     cards = [record_card(r, locale=locale) for r in records]
     chunks = await search_svc.chunk_hits(session, query, k=CANDIDATE_CHUNKS, filters=filters)

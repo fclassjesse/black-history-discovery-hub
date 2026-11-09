@@ -72,7 +72,7 @@ export default function WorldGlobe() {
   const hoverRef = useRef<string | null>(null);
   useEffect(() => { hoverRef.current = hoverId; }, [hoverId]);
 
-  const { pins, recordsById, mode, inset, projection, pending, setWebgl, setStatus } = useWorld();
+  const { pins, recordsById, locality, mode, inset, projection, pending, setWebgl, setStatus } = useWorld();
   const { selectedInstitutionId, selectInstitution, focusInstitutionIds, selectedRecordId } = useSelection();
 
   // ---- create the map once
@@ -202,7 +202,7 @@ export default function WorldGlobe() {
       return;
     }
     idlePlacedRef.current = false;
-    const coords = arrivalCoords(pins);
+    const coords = arrivalCoords(pins, locality);
     const padding = { left: pad.left + 56, top: pad.top + 72, right: pad.right + 56, bottom: pad.bottom + 72 };
     // Arrival: the pending glide is slowing down by now, so an ease-in-out picks it up without a jolt, and easeTo
     // (linear path) avoids flyTo's zoom-out-then-in bump, which read as a hiccup and loaded extra tile levels.
@@ -221,7 +221,7 @@ export default function WorldGlobe() {
       map.once("moveend", () => { arrivalRef.current = false; });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, pinKey, ready, inset.left, inset.top, inset.right, inset.bottom]);
+  }, [mode, pinKey, locality?.key, ready, inset.left, inset.top, inset.right, inset.bottom]);
 
   // ---- idle spin (pauses after any interaction or while a pin is hovered; never with reduced motion)
   useEffect(() => {
@@ -279,7 +279,15 @@ export default function WorldGlobe() {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || mode !== "results") return;
-    const target = selectedInstitutionId ?? focusInstitutionIds[0];
+    // the guide's first cited holder, unless the asker said where they are: then the first cited holder in their
+    // region, and no automatic glide away from it (a click still goes anywhere)
+    const inRegion = (id: string) => {
+      if (!locality) return true;
+      const inst = pins.find((p) => p.institution.id === id)?.institution;
+      const [west, south, east, north] = locality.bbox;
+      return !!inst && inst.longitude != null && inst.latitude != null && inst.longitude >= west && inst.longitude <= east && inst.latitude >= south && inst.latitude <= north;
+    };
+    const target = selectedInstitutionId ?? focusInstitutionIds.find(inRegion);
     if (!target) return;
     const pin = pins.find((p) => p.institution.id === target);
     if (!pin || pin.institution.latitude == null || pin.institution.longitude == null) return;
@@ -293,7 +301,7 @@ export default function WorldGlobe() {
     if (!arrivalRef.current) { glide(); return; }
     map.once("moveend", glide);
     return () => { map.off("moveend", glide); };
-  }, [selectedInstitutionId, focusInstitutionIds, selectedRecordId, pins, ready, mode, inset]);
+  }, [selectedInstitutionId, focusInstitutionIds, selectedRecordId, pins, locality, ready, mode, inset]);
 
   const portalNodes = useMemo(() => portals.map(({ id, el, pin, order }) => createPortal(
     <PinMarker pin={pin} order={order} recordsById={recordsById} open={selectedInstitutionId === id} hovered={hoverId === id} mode={mode} onToggle={() => selectInstitution(selectedInstitutionId === id ? null : id)} />,

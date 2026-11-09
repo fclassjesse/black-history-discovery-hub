@@ -1,5 +1,5 @@
 import { LngLatBounds, type EaseToOptions, type Map as MLMap, type PaddingOptions } from "maplibre-gl";
-import type { Pin } from "@/lib/types";
+import type { Locality, Pin } from "@/lib/types";
 
 const NO_PADDING: PaddingOptions = { left: 0, right: 0, top: 0, bottom: 0 };
 
@@ -44,8 +44,16 @@ function km(a: LngLat, b: LngLat): number {
  * it. Fitting every pin made a result set with one far-away holder frame the whole ocean, which is about the zoom the
  * globe already has, so the camera did not visibly move until the guide's focus arrived seconds later.
  */
-export function arrivalCoords(pins: Pin[]): LngLat[] {
+export function arrivalCoords(pins: Pin[], locality?: Locality | null): LngLat[] {
   const located = pins.filter((p) => p.institution.latitude != null && p.institution.longitude != null);
+  if (locality) {
+    // the asker said where they are: frame their region's holders, or the region itself when none hold a match
+    const [west, south, east, north] = locality.bbox;
+    const inside = located
+      .map((p): LngLat => [p.institution.longitude as number, p.institution.latitude as number])
+      .filter(([lng, lat]) => lng >= west && lng <= east && lat >= south && lat <= north);
+    return inside.length > 1 ? inside : [[west, south], [east, north]];
+  }
   if (located.length === 0) return [];
   const anchor = located.reduce((best, p) => (p.count > best.count ? p : best), located[0]);
   const at = (p: Pin): LngLat => [p.institution.longitude as number, p.institution.latitude as number];

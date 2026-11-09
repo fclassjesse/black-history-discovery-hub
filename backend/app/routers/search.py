@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from app.services import i18n
+from app.services import i18n, locality
 from app.services import search as search_svc
 from app.services.cards import institution_card, linked_map, load_records, record_card
 from app.services.rerank import rerank_items
@@ -56,12 +56,16 @@ async def search(
         identifier=identifier, location=location, has_full_text=full_text,
     )
     t0 = time.monotonic()
-    ids = await search_svc.search_ids(session, q, filters, mode=mode)
+    # "I'm a student at Saint Mary's ..." → search the topic only, and rank Nova Scotia first (natural mode only)
+    region, q_search = locality.detect(q) if mode == "natural" else (None, q)
+    ids = await search_svc.search_ids(session, q_search, filters, mode=mode)
     all_records = await load_records(session, ids)
-    if q.strip() and mode == "natural":
+    if q_search.strip() and mode == "natural":
         # cross-encoder reorders the fused head (same reordering on every page, so pagination stays stable)
-        head = await rerank_items(search_svc.question_to_keywords(q), all_records[:RERANK_HEAD], lambda r: f"{r.title}. {'; '.join(r.subjects[:6])}. {(r.description or '')[:400]}")
+        head = await rerank_items(search_svc.question_to_keywords(q_search), all_records[:RERANK_HEAD], lambda r: f"{r.title}. {'; '.join(r.subjects[:6])}. {(r.description or '')[:400]}")
         all_records = head + all_records[RERANK_HEAD:]
+    if region:
+        all_records = locality.promote(all_records, await locality.local_tiers(session, [r.id for r in all_records[: locality.SEARCH_WINDOW]], region), locality.SEARCH_WINDOW)
     capped = len(ids) >= search_svc.CANDIDATES
     total = await search_svc.count_browse(session, filters) if not q.strip() else len(all_records)
     start = (page - 1) * page_size
@@ -122,7 +126,9 @@ async def search(
         "query": q, "mode": mode, "total": total, "page": page, "page_size": page_size, "results": results, "facets": facets_out,
         "capped": capped, "candidate_limit": search_svc.CANDIDATES, "date_from": filters.date_from, "date_to": filters.date_to,
         "pins": list(pins.values()), "unknown_location_count": unknown_location, "online_only_count": online_only,
-        "online_resources": online, "alias_expansion": search_svc.aliases.expand(search_svc.question_to_keywords(q))[1:] if (q and mode == "natural") else [],
-        "keywords": search_svc.question_to_keywords(q) if (q and mode == "natural") else q,
+        "online_resources": online, "alias_expansion": search_svc.aliases.expand(search_svc.question_to_keywords(q_search))[1:] if (q_search and mode == "natural") else [],
+        "keywords": search_svc.question_to_keywords(q_search) if (q_search and mode == "natural") else q,
+        # where the person said they are; the map opens there and local results are listed first
+        "locality": region.card(locale) if region else None,
         "locale": locale,
     }

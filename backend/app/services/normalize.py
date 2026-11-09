@@ -70,6 +70,9 @@ QUESTION_PREFIXES = (
     "what is known about", "can you tell me about", "i want to know about", "i'm looking for", "im looking for", "looking for", "where can i find",
     "where can i read about", "where can i learn about", "how can i learn about", "what can you tell me about", "what is", "what was", "what are", "what were",
     "who was", "who were", "who is", "who are", "where is", "where was", "where were", "when was", "when were", "when did", "why did", "why was", "how did",
+    "i want to learn more about", "i want to learn about", "i need to learn more about", "i need to learn about", "i'd like to learn about",
+    "i would like to learn about", "i'd like to know about", "i would like to know about", "want to learn more about", "want to learn about",
+    "need to learn more about", "need to learn about", "i'm researching", "i am researching", "researching", "i'm interested in", "i am interested in",
     "do you have", "is there", "are there", "show me", "find", "search for", "information about", "information on", "anything about", "resources about", "resources on",
     # French (Canadian, plain register). Prefixes ending in an apostrophe match without a following space ("qu'est-ce qu'Africville").
     "qu'est-ce que c'est que", "qu'est-ce que c'est", "qu'est-ce que", "qu'est-ce qu'", "qu'est ce que", "qu'est-ce qui est arrivé à", "qu'est-il arrivé à",

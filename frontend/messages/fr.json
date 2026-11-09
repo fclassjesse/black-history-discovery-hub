@@ -298,6 +298,7 @@
     "filters": "Filtres",
     "top": "{n} premiers · ",
     "holdersPinned": "institutions épinglées",
+    "localFirst": "{region} en premier, puisque vous y êtes.",
     "onlineOnly": "en ligne seulement",
     "noLocation": "sans emplacement",
     "noMatch": "Aucune notice ne correspond. Essaie moins de filtres ou une autre graphie. Voir les",
