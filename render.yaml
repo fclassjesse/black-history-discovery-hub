@@ -1,0 +1,82 @@
+# Render Blueprint: database + API + website in one place.
+# Render → New → Blueprint → pick this repo → fill the values it asks for → Apply.
+# Then load the data once: scripts/go_live_restore.sh "<External Database URL>"  (docs/GO_LIVE_CLICK_BY_CLICK.md)
+
+databases:
+  - name: bhdh-db
+    plan: basic-256mb
+    region: ohio
+    postgresMajorVersion: "16"
+    databaseName: bhdh
+    user: bhdh
+
+services:
+  - type: web
+    name: bhdh-api
+    runtime: python
+    plan: standard # 2 GB: the local embedding model + cross-encoder need ~1 GB
+    region: ohio
+    rootDir: backend
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    startCommand: uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /api/health
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bhdh-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
+      # the browser only ever talks to bhdh-web (same-origin proxy), so these are informational
+      - key: CORS_ORIGINS
+        value: https://bhdh-web.onrender.com
+      - key: PUBLIC_BASE_URL
+        value: https://bhdh-web.onrender.com
+      # fill the key you use, leave the other one empty; the provider is picked from whichever key is set
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GUIDE_DAILY_LIMIT
+        value: "300"
+      - key: GUIDE_DAILY_LIMIT_PER_VISITOR
+        value: "30"
+      - key: SEARCH_LOG_RETENTION_DAYS
+        value: "30"
+      - key: TRUST_PROXY_HEADERS
+        value: "true"
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: HTTP_CACHE_DIR
+        value: /data/http-cache
+      - key: JOBS_INLINE
+        value: "true"
+
+  - type: web
+    name: bhdh-web
+    runtime: node
+    plan: starter
+    region: ohio
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: API_URL # private network "host:port"; next.config.ts adds http://
+        fromService:
+          type: web
+          name: bhdh-api
+          property: hostport
+      - key: NEXT_PUBLIC_PRIVACY_CONTACT
+        sync: false

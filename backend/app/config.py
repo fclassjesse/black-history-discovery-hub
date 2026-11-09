@@ -97,12 +97,18 @@ class Settings(BaseSettings):
         return self
 
     @property
+    def _pg_url(self) -> str:
+        # hosts (Render, Heroku) may hand out the short "postgres://" scheme
+        url = self.database_url
+        return "postgresql://" + url[len("postgres://"):] if url.startswith("postgres://") else url
+
+    @property
     def async_database_url(self) -> str:
-        return self.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return self._pg_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
     @property
     def sync_database_url(self) -> str:
-        return self.database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+        return self._pg_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
     @field_validator("openai_api_key", "anthropic_api_key", "dpla_api_key", "europeana_api_key", "smithsonian_api_key", "nypl_api_token", mode="before")
     @classmethod
