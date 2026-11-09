@@ -29,7 +29,7 @@ export function LoginForm({ next }: { next?: string } = {}) {
   return (
     <form onSubmit={submit} className="plate-white mt-8 max-w-md space-y-4 p-6">
       {error && <Notice kind="error">{error}</Notice>}
-      <div><label htmlFor="email" className="field">{t("partner.email")}</label><input id="email" className="input" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+      <div><label htmlFor="email" className="field">{t("partner.email")}</label><input id="email" className="input" type="email" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
       <div><label htmlFor="password" className="field">{t("partner.password")}</label><input id="password" className="input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
       <button type="submit" className="btn btn-lg" disabled={busy}>{busy ? t("partner.signingIn") : t("partner.signIn")}</button>
       <p className="text-xs text-ink-muted">{t("partner.demoNote")}</p>

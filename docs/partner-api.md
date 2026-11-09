@@ -73,7 +73,7 @@ Base: `/api/partner/institutions/{institution_id}`
 | `POST /shelf-scans/{scan_id}/items/{item_id}/confirm` | **requires** `confirmed_holding: true` and either `selected_candidate` or `manual_title`; creates a draft |
 | `POST /shelf-scans/{scan_id}/items/{item_id}/reject` | mark as not a book |
 
-Uploaded files (finding-aid PDFs, shelf photos) are served publicly from `/api/files/{institution_id}/{name}` in this prototype.
+Uploaded files (finding-aid PDFs, shelf photos) are served from `/api/files/{institution_id}/{name}` with an access check: a file that a **published** record points to is public; everything else is visible only to signed-in members of the uploading institution (others get 404).
 
 Public, read-only: `GET /api/search`, `GET /api/records/{id}`, `GET /api/institutions`, `GET /api/institutions/{slug}/records`, `POST /api/guide/ask`, `GET /api/status/sources`.
 

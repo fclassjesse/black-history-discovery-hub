@@ -12,6 +12,7 @@ os.environ["LLM_PROVIDER"] = "fake"
 os.environ["RERANKER"] = "none"
 os.environ["GUIDE_CACHE_TTL_SECONDS"] = "0"
 os.environ["JOBS_INLINE"] = "true"
+os.environ["JOBS_INLINE_BACKGROUND"] = "false"
 os.environ["JWT_SECRET"] = "test-secret"
 os.environ["UPLOAD_DIR"] = str(Path(__file__).resolve().parent / ".uploads")
 

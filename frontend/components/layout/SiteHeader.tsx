@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Link, useRoutePathname, useT } from "@/lib/i18n";
 import { LocaleSwitch } from "@/components/layout/LocaleSwitch";
 
@@ -17,6 +18,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = useRoutePathname();
   const { t } = useT();
+  useEffect(() => { trackVisit(pathname); }, [pathname]);
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -30,7 +32,7 @@ export function SiteHeader() {
     <>
       <header className={`site-header ${onFlame ? "on-flame" : ""}`}>
         <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-[var(--gutter)]">
-          <span aria-hidden className="w-11" />
+          {onFlame ? <span aria-hidden className="w-11" /> : <BackButton label={t("common.back")} />}
           <div className="flex items-center gap-2 sm:gap-3">
             <LocaleSwitch />
             <button type="button" className="btn btn-pill-chalk" aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen((v) => !v)}>
@@ -69,5 +71,28 @@ export function SiteHeader() {
         </div>
       </div>
     </>
+  );
+}
+
+/** Pages visited in this tab, oldest first; a visit to the second-to-last entry is treated as a step back. */
+const visited: string[] = [];
+function trackVisit(path: string) {
+  if (visited[visited.length - 1] === path) return;
+  if (visited[visited.length - 2] === path) visited.pop();
+  else visited.push(path);
+}
+
+/** Inner pages: step back to the previous page on this site; opened directly (nothing to go back to), go home. */
+function BackButton({ label }: { label: string }) {
+  const router = useRouter();
+  const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (visited.length < 2) return; // let the link go to the home page
+    e.preventDefault();
+    router.back();
+  };
+  return (
+    <Link href="/" className="btn btn-secondary btn-icon shrink-0" onClick={onClick} aria-label={label} title={label}>
+      <span aria-hidden className="text-lg leading-none">←</span>
+    </Link>
   );
 }

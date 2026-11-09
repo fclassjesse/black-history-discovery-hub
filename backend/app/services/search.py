@@ -170,6 +170,27 @@ async def _chunk_fts_ids(session: AsyncSession, q: str, filters: SearchFilters, 
     return [row[0] for row in rows]
 
 
+async def _relaxed_ids(session: AsyncSession, terms: list[str], filters: SearchFilters, limit: int) -> tuple[list[uuid.UUID], list[uuid.UUID]]:
+    """OR-match of content words, ordered by how many *distinct* words a record matches, then by rank. Plain
+    ts_rank_cd on an OR query rewards one word repeated through a long description over a short title that carries
+    four of the words, which buried "Africville Sea-Sides hockey team photograph" under thirty Africville books.
+    Returns (all matches, the subset matching every word)."""
+    params: dict[str, Any] = {"limit": limit}
+    where = filters.sql(params)
+    queries = []
+    for i, term in enumerate(terms):
+        params[f"w{i}"] = term
+        queries.append(f"plainto_tsquery('english', :w{i})")
+    hits = " + ".join(f"(r.search_tsv @@ {q})::int" for q in queries)
+    match = " OR ".join(f"r.search_tsv @@ {q}" for q in queries)
+    rank = " + ".join(f"ts_rank_cd(r.search_tsv, {q})" for q in queries)
+    rows = list(await session.execute(
+        text(f"SELECT r.id, ({hits}) AS hits FROM records r WHERE {where} AND ({match}) ORDER BY hits DESC, ({rank}) DESC, r.date_start DESC NULLS LAST LIMIT :limit"),
+        params,
+    ))
+    return [row[0] for row in rows], [row[0] for row in rows if row[1] == len(terms)]
+
+
 def vector_expr(column: str, dim: int) -> str:
     """Must match the HNSW expression index in migration 0002: (embedding::vector(N)) with the model predicate."""
     return f"({column}::vector({int(dim)}))"
@@ -204,6 +225,25 @@ async def _browse_ids(session: AsyncSession, filters: SearchFilters, limit: int)
     return [row[0] for row in rows]
 
 
+RELAXED_STOPWORDS = frozenset(
+    "the a an and or of to in on at for from with by about into over after before between under this that these those "
+    "old new some any all what which who whom whose where when why how is are was were be been being do does did "
+    "have has had it its they them their there here than then very also just more most much many such own same so "
+    "le la les un une des du de et ou au aux en dans sur pour par avec sans ce cet cette ces qui que quoi dont où est sont".split()
+)
+
+
+def relaxed_query(keywords: str) -> list[str] | None:
+    """`"old Black hockey team from Africville"` → `["Black", "hockey", "team", "Africville"]`, matched OR-wise. Only for
+    three or more content words — one or two words are already as relaxed as they get. Quoted phrases and -exclusions
+    are left to the strict legs."""
+    words = [w.strip(",.;:!?()[]") for w in keywords.split()]
+    content = [w for w in words if len(w) >= 3 and w.lower() not in RELAXED_STOPWORDS and not w.startswith(("-", '"'))]
+    if len(content) < 3 or any('"' in w for w in words):
+        return None
+    return list(dict.fromkeys(content))
+
+
 def rrf(rankings: list[list[uuid.UUID]], weights: list[float] | None = None) -> list[uuid.UUID]:
     scores: dict[uuid.UUID, float] = {}
     weights = weights or [1.0] * len(rankings)
@@ -232,6 +272,18 @@ async def search_ids(session: AsyncSession, query: str, filters: SearchFilters, 
             weights.append((1.0 if i == 0 else 0.6) * (1.0 if d == "english" else 0.9))
     rankings.append(await _chunk_fts_ids(session, kw, filters, limit))
     weights.append(0.8)
+    # relaxed lexical leg: websearch_to_tsquery ANDs every word, so one descriptive word the record lacks ("that OLD
+    # Black hockey team from Africville") hides an exact title match. OR the content words, ordered by how many
+    # distinct words each record carries (see _relaxed_ids).
+    relaxed = relaxed_query(kw)
+    if relaxed:
+        partial, full = await _relaxed_ids(session, relaxed, filters, limit)
+        rankings.append(partial)
+        weights.append(1.0)
+        # a record carrying every content word is a strict match in all but the dropped filler word: second ranking
+        # so it also beats records found by two other legs (chunk text + vector)
+        rankings.append(full)
+        weights.append(1.0)
     try:
         provider = get_embeddings()
         vec = (await provider.embed([kw]))[0]
