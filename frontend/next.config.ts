@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
-const API_URL = process.env.API_URL ?? "http://127.0.0.1:8000";
+// Render's private network hands over "host:port" without a scheme
+const RAW_API_URL = process.env.API_URL ?? "http://127.0.0.1:8000";
+const API_URL = /^https?:\/\//.test(RAW_API_URL) ? RAW_API_URL.replace(/\/$/, "") : `http://${RAW_API_URL}`;
 
 const nextConfig: NextConfig = {
   agentRules: false,
