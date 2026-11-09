@@ -188,7 +188,7 @@ export function SearchView() {
   // hand the pins to the world once results exist
   useEffect(() => {
     if (!data) return;
-    publish(data.pins, recordsById, "results");
+    publish(data.pins, recordsById, "results", data.locality ?? null);
   }, [data, recordsById, publish]);
 
   const citationsByRecord = useMemo(() => {
@@ -262,6 +262,9 @@ export function SearchView() {
           {t("search.filters")}{activeFilters ? ` · ${activeFilters}` : ""}
         </button>
       </div>
+      {data?.locality && (
+        <p className="text-sm font-semibold text-ink">{t("search.localFirst", { region: data.locality.label })}</p>
+      )}
       {data && (
         <p className="text-xs text-ink-muted">
           {data.capped ? t("search.top", { n: fmt.number(data.candidate_limit) }) : ""}<span className="tnum">{fmt.number(data.pins.length)}</span> {t("search.holdersPinned")} · <span className="tnum">{fmt.number(data.online_only_count)}</span> {t("search.onlineOnly")} · <span className="tnum">{fmt.number(data.unknown_location_count)}</span> {t("search.noLocation")}

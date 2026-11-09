@@ -94,6 +94,15 @@ export interface SearchResponse {
   date_from: number | null;
   date_to: number | null;
   keywords?: string;
+  /** Where the person said they are ("I'm a student at Saint Mary's") — local results come first, the map opens there. */
+  locality?: Locality | null;
+}
+
+export interface Locality {
+  key: string;
+  label: string;
+  /** west, south, east, north */
+  bbox: [number, number, number, number];
 }
 
 export interface Citation {

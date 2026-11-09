@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Pin, RecordCard } from "@/lib/types";
+import type { Locality, Pin, RecordCard } from "@/lib/types";
 
 export type WorldMode = "idle" | "results";
 export type WorldProjection = "globe" | "flat";
@@ -8,6 +8,8 @@ interface WorldState {
   /** Pins currently on the world. */
   pins: Pin[];
   recordsById: Map<string, RecordCard>;
+  /** The asker's region, when they said where they are: the arrival camera frames it instead of the busiest holder. */
+  locality: Locality | null;
   /** idle = home page miniature world; results = fitted to the search results. */
   mode: WorldMode;
   /** Whether the stage is visible behind the page at all. */
@@ -20,7 +22,7 @@ interface WorldState {
   /** The user can switch to a flat map; `webgl === false` means no map can render at all. */
   webgl: boolean | null;
   status: "booting" | "ready" | "error";
-  publish: (pins: Pin[], recordsById: Map<string, RecordCard>, mode: WorldMode) => void;
+  publish: (pins: Pin[], recordsById: Map<string, RecordCard>, mode: WorldMode, locality?: Locality | null) => void;
   setVisible: (v: boolean) => void;
   setPending: (v: boolean) => void;
   setInset: (inset: Partial<WorldState["inset"]>) => void;
@@ -32,6 +34,7 @@ interface WorldState {
 export const useWorld = create<WorldState>((set) => ({
   pins: [],
   recordsById: new Map(),
+  locality: null,
   mode: "idle",
   visible: false,
   pending: false,
@@ -39,7 +42,7 @@ export const useWorld = create<WorldState>((set) => ({
   projection: "globe",
   webgl: null,
   status: "booting",
-  publish: (pins, recordsById, mode) => set({ pins, recordsById, mode, pending: false }),
+  publish: (pins, recordsById, mode, locality = null) => set({ pins, recordsById, mode, locality, pending: false }),
   setVisible: (visible) => set({ visible }),
   setPending: (pending) => set({ pending }),
   setInset: (inset) => set((s) => ({ inset: { ...s.inset, ...inset } })),
