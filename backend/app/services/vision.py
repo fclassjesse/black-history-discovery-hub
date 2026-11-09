@@ -6,10 +6,14 @@ from typing import Any
 from app.adapters import openlibrary
 from app.services.llm import ImageInput, LLMNotConfigured, get_llm
 
+# Reasoning models spend part of this budget thinking before they write; a dense shelf of 40 books needs ~4k tokens of JSON.
+VISION_MAX_TOKENS = 12000
+
 SYSTEM_PROMPT = """You read photographs of bookshelves for a library partner. Identify each SEPARATE physical book whose spine or
 cover is visible. For each book report only what is actually legible: spine text as printed, and, if clearly readable,
 the title, author and ISBN. Do NOT guess ISBNs, publishers, or years that are not visible. List uncertainties
-(e.g. "author partially hidden", "two volumes may be one set", "text blurred"). Confidence is 0-1 for the item being a
+(e.g. "author partially hidden", "two volumes may be one set", "text blurred"). Report at most 40 books, the most legible first;
+keep every string short and never put a double quote inside a string (use single quotes instead). Confidence is 0-1 for the item being a
 distinct book with a correctly read title. Output exactly one JSON object:
 {"items": [{"spine_text": "...", "title": "...|null", "author": "...|null", "isbn": "...|null", "confidence": 0.0, "uncertainties": ["..."]}],
  "notes": "optional short note about image quality"}
@@ -18,7 +22,7 @@ distinct book with a correctly read title. Output exactly one JSON object:
 
 async def propose_books(image: bytes, mime: str) -> dict[str, Any]:
     llm = get_llm()  # raises LLMNotConfigured → visible error upstream
-    raw = await llm.complete_json(system=SYSTEM_PROMPT, user="Photograph of a bookshelf. List the separate books you can actually read.", images=[ImageInput(image, mime)], max_tokens=2000)
+    raw = await llm.complete_json(system=SYSTEM_PROMPT, user="Photograph of a bookshelf. List the separate books you can actually read.", images=[ImageInput(image, mime)], max_tokens=VISION_MAX_TOKENS)
     items = raw.get("items") if isinstance(raw, dict) else None
     if not isinstance(items, list):
         raise ValueError("vision response did not contain an items list")

@@ -70,6 +70,9 @@ class Settings(BaseSettings):
     # --- Files / jobs ----------------------------------------------------
     upload_dir: Path = BACKEND_ROOT / "uploads"
     jobs_inline: bool = True
+    # inline jobs run after the response is sent, so a slow vision call never holds the upload request open
+    # (the Next.js dev proxy gives up after ~30 s and shows a 500). Tests set this false to await the result.
+    jobs_inline_background: bool = True
     cors_origins: str = "http://localhost:3000"
     public_base_url: str = "http://localhost:3000"
 

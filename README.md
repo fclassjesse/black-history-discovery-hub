@@ -6,6 +6,22 @@ the institution that holds them; we never claim to own the material, and the AI 
 
 Spec: [`PRD.md`](PRD.md) · plan: [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) · partner contract: [`docs/partner-api.md`](docs/partner-api.md) · sources & terms: [`docs/sources.md`](docs/sources.md)
 
+## For judges — 5-minute tour
+
+**Team submission for RBC HubHacks 2026 · Problem Statement 1 (Black Cultural Centre for Nova Scotia).** Licence: [MIT](LICENSE) for the code; indexed descriptions stay with their holders ([`docs/sources.md`](docs/sources.md)).
+
+| What the problem statement asks for | Where to see it |
+|---|---|
+| Ingest / reference metadata from several sample sources, normalised into one structure | 12 live sources on [`/about/sources`](http://localhost:3000/about/sources); one `Record` model in `backend/app/models/core.py`; one adapter per source in `backend/app/adapters/` |
+| Search by people, places, communities, subjects, dates, institutions, resource type | home page (Nova + globe) and *Advanced search*; filter rail = facets from `GET /api/search` |
+| Each result names the source institution, says how to access it, links to the authoritative record, keeps provenance | every record card: holder, access note, "View at source" → `original_url`; `provenance` on the record page |
+| AI grounded in source records, no invented information | ask *"that old Black hockey team from Africville"* → every sentence cites a numbered record; ask *"What did Viola Desmond eat for breakfast?"* → Nova declines and still lists records. Server-side validator: `backend/app/services/guide.py` |
+| Institution / location views, relationship mapping | globe pins → institution card → institution page; "also catalogued at" via `work_keys` |
+| Low-effort onboarding for small partners | institution app [`/app`](http://localhost:3000/app): CSV upload (try [`docs/demo-upload.csv`](docs/demo-upload.csv) — mixed column names, one duplicate), PDF finding aid, manual entry, shelf camera; draft → review → publish → withdraw |
+| Bilingual, accessible, privacy-respecting | `/fr`, keyboard + flat-map toggle, [`/privacy`](http://localhost:3000/privacy) |
+
+Quick start is four commands (`make install`, `make db`, `make migrate`, `make seed`) — see **Setup** below. Tests: `cd backend && uv run pytest` (81 tests) and `cd frontend && npx tsc --noEmit && npm run build`. Pitch and demo run-of-show: [`docs/PITCH_10MIN_DRAFT.md`](docs/PITCH_10MIN_DRAFT.md).
+
 ## What is in the box
 
 | Layer | Stack |
@@ -55,7 +71,7 @@ Open <http://localhost:3000> (public site: Nova the guide + the globe, one page)
 ## Tests and checks
 
 ```bash
-cd backend && uv run pytest          # 80 tests: bilingual search/guide, citation validation, publish confirmation, tenant isolation, adapter fixtures (incl. Dalhousie OAI-PMH), CSV preview, search, public-deployment guards
+cd backend && uv run pytest          # 81 tests: bilingual search/guide, citation validation, publish confirmation, tenant isolation, adapter fixtures (incl. Dalhousie OAI-PMH), CSV preview, search, public-deployment guards
 cd frontend && npx tsc --noEmit && npm run build
 ```
 
@@ -105,7 +121,7 @@ uv run python scripts/db.py stop                                                
 3. **Click a verified pin.** Click the Library of Congress pin → anchored card lists holdings with call numbers → "Visit / request access" opens the institution page with access requirements.
 4. **Unsupported claim is refused.** Ask *"what did Viola Desmond eat for breakfast?"* → the Guide abstains and still shows the matching records.
 5. **Advanced search is deterministic.** Top-right "Advanced search" → query `"Black Loyalists" -Sierra`, type *book*, institution *Library of Congress* → SQL-only results, no guide involvement.
-6. **Partner import → review → publish → withdraw.** Partner portal → log in as `editor@bccns.example` → *Import CSV / JSON* → upload [`docs/partner-import-template.csv`](docs/partner-import-template.csv) (or your own; the preview flags missing titles and duplicates and lets you remap columns) → Commit → *Records* → Submit for review. Sign out, log in as `reviewer@bccns.example` → *Review queue* → Publish → the record is now in public search; its pin carries the seeded precision label (BCCNS: *road-level, approximate*) until an owner ticks the verification box on *Profile & location*, which upgrades it to *partner-verified*. Withdraw → it disappears from search immediately.
+6. **Partner import → review → publish → withdraw.** Partner portal (or the phone-first `/app`) → log in as `editor@bccns.example` → *Import CSV / JSON* → upload [`docs/demo-upload.csv`](docs/demo-upload.csv) (nine real Library of Congress catalogue rows with partner-style column names — `Author`, `Year`, `Record URL` — plus one deliberate duplicate; each row says it is a demo row) or [`docs/partner-import-template.csv`](docs/partner-import-template.csv) (or your own; the preview flags missing titles and duplicates and lets you remap columns) → Commit → *Records* → Submit for review. Sign out, log in as `reviewer@bccns.example` → *Review queue* → Publish → the record is now in public search; its pin carries the seeded precision label (BCCNS: *road-level, approximate*) until an owner ticks the verification box on *Profile & location*, which upgrades it to *partner-verified*. Withdraw → it disappears from search immediately.
 7. **Shelf camera.** Log in on a phone (or desktop) → *Shelf camera* → photograph a shelf. Vision proposes separate books with confidence and uncertainties; Open Library candidates appear per book; edit the title/author, pick the edition, enter call number and shelf, tick **"Our institution physically holds this item"** → Confirm creates a **draft**. Publish it from the Review queue. Without an AI key the upload returns a visible *vision unconfigured* error.
 7b. **Held in Canada.** The filter rail has a *Held in* group (country of the holding institution) so the demo can be narrowed to Canadian holders in one click; online-only items have no holder country and stay in the *Online resources* panel.
 8. **Transparency.** `/about/sources` shows each connector live: LoC SRU, Internet Archive, Dalhousie OAI-PMH, UK National Archives, Harvard, Wikimedia Commons, NS Open Data (and DPLA/Europeana with keys) ok; Smithsonian/NYPL **unconfigured** until a key is added; LoC JSON **blocked** (Cloudflare challenge, not circumvented), DPLA/Europeana **unconfigured**.
@@ -143,6 +159,7 @@ results list beside the globe for keyboard and screen-reader users.
 - **Auth is FastAPI-native** (argon2 + JWT cookie) rather than Supabase Auth/RLS; tenant checks are enforced server-side on every partner endpoint and covered by tests.
 - **Voice** uses the browser Web Speech API (push-to-talk, editable transcript). Server transcription needs `OPENAI_API_KEY`; live duplex voice is out of scope.
 - **Uploaded files** (PDF finding aids, shelf photos) are served by `app/routers/files.py`: a file that a **published** record points to (a finding-aid PDF) is public; everything else is visible only to signed-in members of the uploading institution (others get 404).
+- **Natural search has a relaxed lexical leg** (2026-11-08): the strict full-text legs AND every word, so one filler word the record lacks ("that *old* Black hockey team from Africville") used to hide an exact title match; content words are now also OR-matched and ordered by how many distinct words a record carries (`relaxed_query` / `_relaxed_ids` in `app/services/search.py`). Advanced mode is unchanged.
 - **Search candidate cap**: natural-language search keeps lexical hits plus semantic hits under a cosine-distance floor, ranked and capped at 300 (the UI then says "300+ · showing the 300 most relevant"); browse mode reports the true count but pages through the 300 most recent.
 - Partner-verified holdings can also be declared in manual entry, but only with an explicit confirmation checkbox that is written to the audit trail.
 - The **Demo Partner** is fictional. Its records are real Open Library bibliographic entries but its *holdings* are sample data (`holding_verification=demo`, dashed pin). BCCNS has logins and no holdings until staff add them.

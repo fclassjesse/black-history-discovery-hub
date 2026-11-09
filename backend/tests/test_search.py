@@ -82,3 +82,13 @@ async def test_country_filter_keeps_only_holdings_in_that_country(client, sessio
     assert d["facets"]["country"] == [{"value": "Canada", "count": 1, "label": "Canada"}]
     d = (await client.get("/api/search", params={"q": "Black Loyalists", "mode": "advanced"})).json()
     assert {f["value"] for f in d["facets"]["country"]} == {"Canada", "United Kingdom"}
+
+
+def test_relaxed_query_widens_multiword_questions():
+    """One descriptive word the record lacks must not hide an exact title match (the Africville Sea-Sides photo)."""
+    from app.services.search import relaxed_query
+
+    assert relaxed_query("old Black hockey team from Africville") == ["Black", "hockey", "team", "Africville"]
+    assert relaxed_query("Africville") is None  # one or two words are already as relaxed as they get
+    assert relaxed_query("Viola Desmond") is None
+    assert relaxed_query('"Black Loyalists" -Sierra') is None  # quoted phrases stay with the strict legs

@@ -2,6 +2,7 @@
 `python -m app.worker` polls the table otherwise."""
 from __future__ import annotations
 
+import asyncio
 import traceback
 import uuid
 from datetime import datetime, timezone
@@ -57,9 +58,19 @@ async def run_job(job_id: uuid.UUID) -> None:
         await session.commit()
 
 
+_BACKGROUND: set[asyncio.Task[None]] = set()
+
+
 async def maybe_run_inline(job: Job) -> None:
-    if get_settings().jobs_inline:
+    settings = get_settings()
+    if not settings.jobs_inline:
+        return
+    if not settings.jobs_inline_background:
         await run_job(job.id)
+        return
+    task = asyncio.create_task(run_job(job.id))  # client polls the scan until it leaves queued/processing
+    _BACKGROUND.add(task)
+    task.add_done_callback(_BACKGROUND.discard)
 
 
 async def poll_once() -> int:
