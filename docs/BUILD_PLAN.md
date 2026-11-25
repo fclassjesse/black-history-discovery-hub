@@ -1,6 +1,6 @@
 # Build Plan — Black History Discovery Platform (RBC HubHacks · BCCNS)
 
-Written 2026-11-06 after research in plan mode. Spec: `PRD.md` (identical to `Black_History_Discovery_PRD_Claude_Code.md`). Sketches: `reference-hero.jpg`, `reference-results.jpg`, `reference-data-flow.png`. Background: `Problem statement 1.pdf`, `Black Cultural Centre – Challenge Kickoff Notes.pdf`, `Meeting notes.docx` (mentor summary: build 1–2 fully working features, prototype by Sunday, present Monday).
+Written 2026-11-06 after research in plan mode. Spec: `PRD.md`. Sketches: `reference-hero.jpg`, `reference-results.jpg`, `reference-data-flow.png`. Background: the challenge brief and mentor feedback.
 
 ## 1. Context
 

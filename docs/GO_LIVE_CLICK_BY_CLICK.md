@@ -38,7 +38,7 @@ The new database is empty. This copies your 1,543 records from the laptop and se
    **External Database URL**.
 2. Make sure the app runs on your laptop (the local database must be on). Then in the VS Code terminal:
    ```bash
-   cd "/Users/xsy/Desktop/RBC Hackthon"
+   cd black-history-discovery-hub
    scripts/go_live_restore.sh "PASTE_EXTERNAL_DATABASE_URL_HERE"
    ```
 3. It asks for a **new partner password** twice (at least 14 characters; nothing shows while you type).
